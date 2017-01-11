@@ -7,6 +7,28 @@ import scala.util.Random
   */
 object GraphTools extends App {
 
+  def generateDirectedGraph(n: Int, m: Int): IDirectedGraph = {
+    val coords: List[(Int,Int)] = (1 to m)
+      .foldLeft(List.empty[(Int,Int)]) { (acc: List[(Int,Int)], _) =>
+        Stream
+          .continually((Random.nextInt(n), Random.nextInt(n)))
+          .dropWhile(coor => acc.contains(coor) || (coor._1 == coor._2))
+          .collectFirst({case x: (Int,Int) => x})
+          .get :: acc
+      }
+
+    val nodes: List[NodeDirected] = coords.map(coor => {
+      NodeDirected(coor._1, List.empty)
+    })
+
+    AdjacencyListDirectedGraph(coords.map(coor => {
+      val nodeFrom = nodes.find(_.id == coor._1).get
+      val nodeTo = nodes.find(_.id == coor._2).get
+      nodeFrom.copy(successors = nodeTo :: nodeFrom.successors)
+    }))
+  }
+
+
   def generateGraphData(n: Int, m: Int, s: Boolean): List[List[Int]] = {
 
     val coords: List[(Int,Int)] = (1 to m)
