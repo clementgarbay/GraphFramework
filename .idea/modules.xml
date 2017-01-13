@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Graph.iml" filepath="$PROJECT_DIR$/Graph.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/graph.iml" filepath="$PROJECT_DIR$/.idea/modules/graph.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/graph-build.iml" filepath="$PROJECT_DIR$/.idea/modules/graph-build.iml" />
     </modules>
   </component>
 </project>
