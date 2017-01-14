@@ -55,7 +55,9 @@ object AdjacencyListDirectedGraph {
 
   def apply(matrix: List[List[Int]]): AdjacencyListDirectedGraph = {
     new AdjacencyListDirectedGraph(matrix.zipWithIndex.map({
-      case (successors, i) => NodeDirected(i, successors.filter(_ == 1).toSet)
+      case (successors, j) => NodeDirected(j, successors.zipWithIndex.collect({
+        case (value, i) if value == 1 => i
+      }).toSet)
     }).toSet)
   }
 

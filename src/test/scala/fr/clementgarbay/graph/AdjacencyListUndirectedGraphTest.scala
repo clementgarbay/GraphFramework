@@ -8,44 +8,44 @@ import org.scalatest._
 class AdjacencyListUndirectedGraphTest extends WordSpec {
 
   "An undirected adjacency list graph with 4 nodes and 4 edges" should {
-    "have 4 nodes" in new Context {
+    "have 4 nodes" in new ContextUndirected {
       assert(graph.nbNodes == 4)
     }
-    "have 4 edges" in new Context {
+    "have 4 edges" in new ContextUndirected {
       assert(graph.nbEdges == 4)
     }
     "return true" when {
-      "isEdge is called and edge exists" in new Context {
+      "isEdge is called and edge exists" in new ContextUndirected {
         assert(graph.isEdge(3,1))
       }
     }
     "return false" when {
-      "isEdge is called and edge doesn't exist" in new Context {
+      "isEdge is called and edge doesn't exist" in new ContextUndirected {
         assert(!graph.isEdge(4,3))
       }
     }
     "have 5 edges" when {
-      "addEdge is called with a new edge" in new Context {
+      "addEdge is called with a new edge" in new ContextUndirected {
         assert(graph.addEdge(3,2).nbEdges == 5)
       }
     }
     "have 3 edges" when {
-      "removeEdge is called" in new Context {
+      "removeEdge is called" in new ContextUndirected {
         assert(graph.removeEdge(1,2).nbEdges == 3)
       }
     }
-    "be a int list of 0,2,3 (node id)" when {
-      "getNeighbors is called with 1 in parameter" in new Context {
+    "be a int list of 0,2,3" when {
+      "getNeighbors is called with 1 in parameter" in new ContextUndirected {
         assert(graph.getNeighbors(1) == Set(0,2,3))
       }
     }
     "be the correct adjacency matrix representation (List of List)" when {
-      "toAdjacencyMatrix is called" in new Context {
+      "toAdjacencyMatrix is called" in new ContextUndirected {
         assert(graph.toAdjacencyMatrix == graphMatrix)
       }
     }
     "initialize an undirected adjacency list graph" when {
-      "from adjacency matrix representation" in new Context {
+      "from adjacency matrix representation" in new ContextUndirected {
         assert(AdjacencyListUndirectedGraph(graphMatrix) == graph)
       }
     }
@@ -53,7 +53,7 @@ class AdjacencyListUndirectedGraphTest extends WordSpec {
 
 }
 
-trait Context {
+trait ContextUndirected {
   val n1 = NodeUndirected(0, Set(1, 2))
   val n2 = NodeUndirected(1, Set(0, 2, 3))
   val n3 = NodeUndirected(2, Set(0, 1))
