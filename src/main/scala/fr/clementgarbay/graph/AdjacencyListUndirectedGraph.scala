@@ -43,7 +43,9 @@ object AdjacencyListUndirectedGraph {
 
   def apply(matrix: List[List[Int]]): AdjacencyListUndirectedGraph = {
     new AdjacencyListUndirectedGraph(matrix.zipWithIndex.map({
-      case (neighbors, i) => NodeUndirected(i, neighbors.filter(_ == 1).toSet)
+      case (neighbors, j) => NodeUndirected(j, neighbors.zipWithIndex.collect({
+        case (value, i) if value == 1 => i
+      }).toSet)
     }).toSet)
   }
 
