@@ -39,6 +39,11 @@ class AdjacencyListUndirectedGraphTest extends WordSpec {
         assert(graph.getNeighbors(1) == Set(0,2,3))
       }
     }
+    "be an empty list if node does not exist" when {
+      "getNeighbours is called with 12 in parameter" in new ContextUndirected {
+        assert(graph.getNeighbors(12) == Set.empty)
+      }
+    }
     "be the correct adjacency matrix representation (List of List)" when {
       "toAdjacencyMatrix is called" in new ContextUndirected {
         assert(graph.toAdjacencyMatrix == graphMatrix)

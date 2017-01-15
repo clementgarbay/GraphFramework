@@ -25,13 +25,23 @@ class AdjacencyListDirectedGraphTest extends WordSpec {
       }
     }
     "have 8 arcs" when {
-      "addEdge is called with a new arc" in new ContextDirected {
+      "addArc is called with a new arc" in new ContextDirected {
         assert(graph.addArc(2,3).nbArcs == 8)
+      }
+    }
+    "have 7 arcs" when {
+      "addArc is called with a not existing node" in new ContextDirected {
+        assert(graph.addArc(4,0).nbArcs == 7)
       }
     }
     "have 6 arcs" when {
       "removeArc is called" in new ContextDirected {
         assert(graph.removeArc(1,3).nbArcs == 6)
+      }
+    }
+    "have 7 arcs" when {
+      "removeArc is called with a not existing arc" in new ContextDirected {
+        assert(graph.removeArc(4,3).nbArcs == 7)
       }
     }
     "be a int list of 0,3" when {

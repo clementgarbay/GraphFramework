@@ -8,6 +8,12 @@ case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirect
   override val nbNodes: Int = matrix.size
   override val nbArcs: Int = matrix.map(_.count(_ == 1)).sum / 2
 
+  override val toAdjacencyMatrix: List[List[Int]] = matrix
+
+  override lazy val computeInverse: IDirectedGraph = ???
+
+  override lazy val toUndirectedGraph: AdjacencyListUndirectedGraph = ???
+
   override def isArc(from: Int, to: Int): Boolean = matrix.lift(from).flatMap(_.lift(to)).getOrElse(0) == 1
 
   override def addArc(from: Int, to: Int): IDirectedGraph = update(from, to, 1)
@@ -22,10 +28,6 @@ case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirect
     }
   }).toSet
 
-  override def computeInverse: IDirectedGraph = ???
-
-  override def toAdjacencyMatrix: List[List[Int]] = matrix
-
   def update(from: Int, to: Int, value: Int): IDirectedGraph =
     AdjacencyMatrixDirectedGraph(
       matrix.zipWithIndex.map {
@@ -33,6 +35,7 @@ case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirect
         case (neighbors, _) => neighbors
       }
     )
+
 }
 
 object AdjacencyMatrixDirectedGraph {

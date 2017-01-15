@@ -11,7 +11,8 @@ trait IGraph {
   val nbNodes: Int
 
   /**
-    * @return The adjacency matrix representation of the graph
+    * The associated adjacency matrix representation of the graph
     */
-  def toAdjacencyMatrix: List[List[Int]]
+  val toAdjacencyMatrix: List[List[Int]]
+
 }

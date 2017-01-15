@@ -11,6 +11,16 @@ trait IDirectedGraph extends IGraph {
   val nbArcs: Int
 
   /**
+    * The inverse graph
+    */
+  val computeInverse: IDirectedGraph
+
+  /**
+    * The corresponding undirected graph from the directed graph
+    */
+  val toUndirectedGraph: AdjacencyListUndirectedGraph
+
+  /**
     * @param from
     * @param to
     * @return True iff arc (from,to) figures in the graph
@@ -43,9 +53,4 @@ trait IDirectedGraph extends IGraph {
     */
   def getPredecessors(node: Int): Set[Int]
 
-  /**
-    * Computes the inverse graph
-    * @return
-    */
-  def computeInverse: IDirectedGraph
 }
