@@ -6,7 +6,7 @@ package fr.clementgarbay.graph
 case class AdjacencyMatrixUndirectedGraph(matrix: List[List[Int]]) extends IUndirectedGraph {
 
   override val nbNodes: Int = matrix.size
-  override val nbEdges: Int = matrix.map(_.count(_ == 1)).sum / 2
+  override lazy val nbEdges: Int = matrix.map(_.count(_ == 1)).sum / 2
 
   override val toAdjacencyMatrix: List[List[Int]] = matrix
 
@@ -18,24 +18,29 @@ case class AdjacencyMatrixUndirectedGraph(matrix: List[List[Int]]) extends IUndi
 
   override def removeEdge(from: Int, to: Int): IUndirectedGraph = update(from, to, 0)
 
-  override def getNeighbors(node: Int): Set[Int] = matrix.find(_ == node).filter(_ == 1).map(_.toSet).getOrElse(Set.empty)
+  override def getNeighbors(node: Int): Set[Int] =
+    matrix.lift(node)
+      .map(_.zipWithIndex).getOrElse(Set.empty)
+      .collect { case (value, index) if value == 1 => index }
+      .toSet
 
-  def update(from: Int, to: Int, value: Int): IUndirectedGraph =
+  private def update(from: Int, to: Int, value: Int): IUndirectedGraph =
     AdjacencyMatrixUndirectedGraph(matrix.zipWithIndex.map {
-      case (neighbors, i) if i == from && neighbors.length < to => neighbors.updated(to, value)
-      case (neighbors, j) if j == to && neighbors.length < from => neighbors.updated(from, value)
+      case (neighbors, i) if i == from && to < neighbors.length => neighbors.updated(to, value)
+      case (neighbors, j) if j == to && from < neighbors.length => neighbors.updated(from, value)
       case (neighbors, _) => neighbors
     })
 }
 
 object AdjacencyMatrixUndirectedGraph {
 
-  def apply(undirectedGraph: IUndirectedGraph): AdjacencyMatrixUndirectedGraph = {
-    new AdjacencyMatrixUndirectedGraph(
-      (0 until undirectedGraph.nbNodes)
-        .map({ i => undirectedGraph.getNeighbors(i).toList }) // TODO: add 0
-        .toList
+  implicit def apply(graph: IUndirectedGraph): AdjacencyMatrixUndirectedGraph =
+    AdjacencyMatrixUndirectedGraph(
+      (0 until graph.nbNodes).toList.map { i =>
+        (0 until graph.nbNodes).toList.map { j =>
+          graph.isEdge(i, j).toInt
+        }
+      }
     )
-  }
 
 }
