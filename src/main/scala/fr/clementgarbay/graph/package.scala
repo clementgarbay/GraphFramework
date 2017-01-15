@@ -5,6 +5,8 @@ package fr.clementgarbay
   */
 package object graph {
 
+  type Matrix = List[List[Int]]
+
   class AsInt(b: Boolean) {
     def toInt: Int = if (b) 1 else 0
   }

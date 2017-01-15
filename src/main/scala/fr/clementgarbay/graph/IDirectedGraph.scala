@@ -18,7 +18,7 @@ trait IDirectedGraph extends IGraph {
   /**
     * The corresponding undirected graph from the directed graph
     */
-  val toUndirectedGraph: AdjacencyListUndirectedGraph
+  val toUndirectedGraph: IUndirectedGraph
 
   /**
     * @param from
