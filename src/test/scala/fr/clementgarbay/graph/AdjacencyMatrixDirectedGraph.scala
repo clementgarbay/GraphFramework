@@ -90,6 +90,26 @@ class AdjacencyMatrixDirectedGraphTest extends WordSpec {
         assert(adjacencyMatrix == graph)
       }
     }
+    "be a int list of all nodes (0,1,2,3)" when {
+      "explore the graph with DFS algorithm starting with node 0" in new ContextMatrixDirected {
+        assert(graph.depthFirstSearch(0) == Set(0,1,2,3))
+      }
+    }
+    "be a int list of all nodes (0,1,2,3)" when {
+      "explore the graph with BFS algorithm starting with node 0" in new ContextMatrixDirected {
+        assert(graph.breadthFirstSearch(0) == Set(0,1,2,3))
+      }
+    }
+    "be a int list of 0,1,2" when {
+      "explore the graph `graph2` with DFS algorithm starting with node 0" in new ContextMatrixDirected {
+        assert(graph2.depthFirstSearch(0) == Set(0,1,2))
+      }
+    }
+    "be a int list of 0,1,2" when {
+      "explore the graph `graph2` with BFS algorithm starting with node 0" in new ContextMatrixDirected {
+        assert(graph2.breadthFirstSearch(0) == Set(0,1,2))
+      }
+    }
   }
 }
 
@@ -99,6 +119,13 @@ trait ContextMatrixDirected {
   val graphMatrix = List(
     List(0, 1, 1, 0),
     List(0, 0, 0, 1),
+    List(0, 1, 0, 0),
+    List(1, 0, 1, 0)
+  )
+
+  val graphMatrix2 = List(
+    List(0, 1, 1, 0),
+    List(0, 0, 1, 0),
     List(0, 1, 0, 0),
     List(1, 0, 1, 0)
   )
@@ -127,8 +154,8 @@ trait ContextMatrixDirected {
     List(1, 1, 1, 0)
   )
 
-
   val graph = AdjacencyMatrixDirectedGraph(graphMatrix)
+  val graph2 = AdjacencyMatrixDirectedGraph(graphMatrix2)
   val graphInverse = AdjacencyMatrixDirectedGraph(graphMatrixInverse)
   val graphUndirected = AdjacencyMatrixUndirectedGraph(graphMatrixUndirected)
 }

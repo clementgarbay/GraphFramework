@@ -54,6 +54,16 @@ class AdjacencyListUndirectedGraphTest extends WordSpec {
         assert(AdjacencyListUndirectedGraph(graphMatrix) == graph)
       }
     }
+    "be a int list of all nodes (0,1,2,3)" when {
+      "explore the graph with DFS algorithm starting with node 0" in new ContextUndirected {
+        assert(graph.depthFirstSearch(0) == Set(0,1,2,3))
+      }
+    }
+    "be a int list of all nodes (0,1,2,3)" when {
+      "explore the graph with BFS algorithm starting with node 0" in new ContextUndirected {
+        assert(graph.breadthFirstSearch(0) == Set(0,1,2,3))
+      }
+    }
   }
 
 }

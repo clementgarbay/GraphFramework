@@ -84,6 +84,26 @@ class AdjacencyListDirectedGraphTest extends WordSpec {
         assert(AdjacencyListDirectedGraph(graphMatrix) == graph)
       }
     }
+    "be a int list of all nodes (0,1,2,3)" when {
+      "explore the graph with DFS algorithm starting with node 0" in new ContextDirected {
+        assert(graph.depthFirstSearch(0) == Set(0,1,2,3))
+      }
+    }
+    "be a int list of all nodes (0,1,2,3)" when {
+      "explore the graph with BFS algorithm starting with node 0" in new ContextDirected {
+        assert(graph.breadthFirstSearch(0) == Set(0,1,2,3))
+      }
+    }
+    "be a int list of 0,1,2" when {
+      "explore the graph `graph2` with DFS algorithm starting with node 0" in new ContextDirected {
+        assert(graph2.depthFirstSearch(0) == Set(0,1,2))
+      }
+    }
+    "be a int list of 0,1,2" when {
+      "explore the graph `graph2` with BFS algorithm starting with node 0" in new ContextDirected {
+        assert(graph2.breadthFirstSearch(0) == Set(0,1,2))
+      }
+    }
   }
 
 }
@@ -93,6 +113,13 @@ trait ContextDirected {
   val graph = AdjacencyListDirectedGraph(Set(
     NodeDirected(0, Set(1, 2)),
     NodeDirected(1, Set(0, 3)),
+    NodeDirected(2, Set(1)),
+    NodeDirected(3, Set(0, 2))
+  ))
+
+  val graph2 = AdjacencyListDirectedGraph(Set(
+    NodeDirected(0, Set(1, 2)),
+    NodeDirected(1, Set(0)),
     NodeDirected(2, Set(1)),
     NodeDirected(3, Set(0, 2))
   ))
