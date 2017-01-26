@@ -7,6 +7,7 @@ case class AdjacencyListDirectedGraph(nodes: Set[NodeDirected]) extends IDirecte
 
   override lazy val nbNodes: Int = nodes.size
   override lazy val nbArcs: Int = nodes.toList.map(_.successors.size).sum
+  override lazy val nodesList: Set[Int] = nodes.map(_.id)
 
   override lazy val toAdjacencyMatrix: List[List[Int]] =
     (0 until nodes.size).map { i =>

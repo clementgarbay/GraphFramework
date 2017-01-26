@@ -7,6 +7,7 @@ case class AdjacencyListUndirectedGraph(nodes: Set[NodeUndirected]) extends IUnd
 
   override lazy val nbNodes: Int = nodes.size
   override lazy val nbEdges: Int = nodes.toList.map(_.neighbors.size).sum / 2
+  override lazy val nodesList: Set[Int] = nodes.map(_.id)
 
   override lazy val toAdjacencyMatrix: List[List[Int]] =
     (0 until nodes.size).map { i =>

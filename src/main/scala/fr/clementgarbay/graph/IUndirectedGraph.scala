@@ -82,10 +82,14 @@ trait IUndirectedGraph extends IGraph {
   }
 
 //  def exploreGraph(): Set[IUndirectedGraph] = {
+//    def exploreNode(node: Int, visited: Set[Int]): Set[Int] = {
+//      var currentVisit = visited + node
+//      for
+//    }
 //
-//
-//    def exploreNode(node: Int, a: Set[Int]): Unit = {
-//
+//    var visited: Set[Int] = Set.empty
+//    for (node <- 0 until nbNodes if !(visited contains node)){
+//      exploreNode(node, visited)
 //    }
 //  }
 //

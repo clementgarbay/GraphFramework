@@ -15,4 +15,8 @@ trait IGraph {
     */
   val toAdjacencyMatrix: List[List[Int]]
 
+  /**
+    * Return the list of existing nodes in the graph
+    */
+  val nodesList: Set[Int]
 }
