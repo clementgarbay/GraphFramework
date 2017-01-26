@@ -11,6 +11,11 @@ trait IUndirectedGraph extends IGraph {
   val nbEdges: Int
 
   /**
+    * Check the connectivity of the graph
+    */
+  val isConnected: Boolean = depthFirstSearch(0).size == nbNodes
+
+  /**
     * Tests if two nodes are a edge
     *
     * @param from The first node
@@ -75,5 +80,51 @@ trait IUndirectedGraph extends IGraph {
 
     breadthFirstSearchRec(Set(startingNode), Set(startingNode))
   }
+
+//  def exploreGraph(): Set[IUndirectedGraph] = {
+//
+//
+//    def exploreNode(node: Int, a: Set[Int]): Unit = {
+//
+//    }
+//  }
+//
+//  void explorerGraphe() {
+//    Set<Sommet> atteint = new HashSet<Sommet>()
+//    visit[] = 0
+//    for (Sommet s : sommets) {
+//      if (!atteint.contains(s)) {
+//        explorerSommet(s, atteint)
+//      }
+//    }
+//  }
+//
+//  void explorerSommet(Sommet s, Set<Sommets> a) {
+//    a.add(s)
+//
+//    for (Sommet t : s.voisins()) {
+//      if (!a.contains(t)) {
+//        explorerSommet(t,a)
+//      }
+//    }
+//    fin.add(s)
+//  }
+
+//  def explore(): Set[Set[Int]] = {
+//
+//    val first = depthFirstSearch(0)
+//    var res = Set(first)
+//
+//    var notVisited = (0 until nbNodes).diff(first.toSeq)
+//
+//    while (notVisited.nonEmpty) {
+//      val node = notVisited.collectFirst({case x: Int => x})
+//      val visited = depthFirstSearch(node.get)
+//      res = res ++ visited
+//      notVisited = (0 until nbNodes).diff(visited.toSeq)
+//    }
+//
+//    res
+//  }
 
 }
