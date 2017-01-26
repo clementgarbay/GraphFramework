@@ -13,12 +13,17 @@ trait IDirectedGraph extends IGraph {
   /**
     * The inverse graph
     */
-  val computeInverse: IDirectedGraph
+  val inverse: IDirectedGraph
 
   /**
     * The corresponding undirected graph from the directed graph
     */
   val toUndirectedGraph: IUndirectedGraph
+
+  /**
+    * Check the strong connectivity of the graph
+    */
+  val isConnected: Boolean = depthFirstSearch(0).size == nbNodes && inverse.depthFirstSearch(0).size == nbNodes
 
   /**
     * Tests if two nodes are an arc

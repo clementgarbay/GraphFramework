@@ -10,7 +10,7 @@ case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirect
 
   override val toAdjacencyMatrix: List[List[Int]] = matrix
 
-  override lazy val computeInverse: IDirectedGraph = AdjacencyMatrixDirectedGraph(matrix.transpose)
+  override lazy val inverse: IDirectedGraph = AdjacencyMatrixDirectedGraph(matrix.transpose)
 
   override lazy val toUndirectedGraph: AdjacencyMatrixUndirectedGraph =
     AdjacencyMatrixUndirectedGraph(

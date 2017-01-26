@@ -7,8 +7,9 @@ object Main extends App {
 
   override def main(args: Array[String]): Unit = {
 
-    val graph = GraphTools.generateUndirectedGraph(3,2)
+    val graph = GraphTools.generateUndirectedGraph(10,10)
 
+    println(graph.depthFirstSearch(0))
 //    GraphTools.displayGraph(graph)
 //
 //    println(graph.getNbEdges)
@@ -18,8 +19,8 @@ object Main extends App {
 
 //    val graph2 = GraphTools.generateDirectedGraph(3,2)
 
-    GraphTools.displayGraph(graph)
-    GraphTools.displayGraph(graph.toAdjacencyMatrix)
+//    GraphTools.displayGraph(graph)
+//    GraphTools.displayGraph(graph.toAdjacencyMatrix)
 
 //    GraphTools.displayGraph(graph2)
 

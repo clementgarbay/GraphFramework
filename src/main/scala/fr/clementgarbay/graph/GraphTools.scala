@@ -72,16 +72,25 @@ object GraphTools {
     list
   }
 
-  def displayGraph(graph: List[List[Int]]) = {
+  def displayGraph(graph: List[List[Int]]): Unit = {
     println(graph.map(_.mkString("  ")).mkString("\n"))
   }
 
-  def displayGraph(graph: AdjacencyListDirectedGraph) = {
+  def displayGraph(graph: AdjacencyListDirectedGraph): Unit = {
     println(graph.nodes.map(node => node.id + " -> " + node.successors.mkString(", ")).mkString("\n"))
   }
 
-  def displayGraph(graph: AdjacencyListUndirectedGraph) = {
+  def displayGraph(graph: AdjacencyListUndirectedGraph): Unit = {
     println(graph.nodes.map(node => node.id + " -> " + node.neighbors.mkString(", ")).mkString("\n"))
+  }
+
+  def time[R](block: => R): Long = {
+    val t0 = System.nanoTime()
+    val result = block
+    // call-by-name
+    val t1 = System.nanoTime()
+    println("Elapsed time: " + (t1 - t0) + " ns or " + (t1 - t0) / 1000000 + " ms")
+    t1 - t0
   }
 
   //  def generateDirectedGraphV2(order: Int, nbEdges: Int): AdjacencyListDirectedGraph = {

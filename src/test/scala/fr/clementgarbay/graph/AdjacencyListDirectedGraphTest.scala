@@ -66,7 +66,7 @@ class AdjacencyListDirectedGraphTest extends WordSpec {
     }
     "be the correct directed adjacency list graph inverse" when {
       "computeInverse is called" in new ContextDirected {
-        assert(graph.computeInverse == graphInverse)
+        assert(graph.inverse == graphInverse)
       }
     }
     "be the correct adjacency matrix representation (List of List)" when {

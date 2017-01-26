@@ -15,7 +15,7 @@ case class AdjacencyListDirectedGraph(nodes: Set[NodeDirected]) extends IDirecte
       }.toList
     }.toList
 
-  override lazy val computeInverse: IDirectedGraph =
+  override lazy val inverse: IDirectedGraph =
     AdjacencyListDirectedGraph(
       nodes.map(node => NodeDirected(node.id, getPredecessors(node.id)))
     )
