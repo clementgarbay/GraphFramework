@@ -41,7 +41,7 @@ class AdjacencyMatrixUndirectedGraphTest extends WordSpec {
     }
     "be a int list of 0,2,3" when {
       "getNeighbours is called with 1 in parameter" in new ContextMatrixUndirected {
-        assert(graph.getNeighbors(1) == Set(0, 2, 3))
+        assert(graph.getNeighborsIds(1) == Set(0, 2, 3))
       }
     }
     "be an empty list if node does not exist" when {
@@ -90,7 +90,7 @@ trait ContextMatrixUndirected {
 
   val graph = AdjacencyMatrixUndirectedGraph(graphMatrix)
 
-  val adjacencyListUndirectedGraph: AdjacencyListUndirectedGraph = AdjacencyListUndirectedGraph.apply(adjacencyList)
-  var adjacencyMatrix: AdjacencyMatrixUndirectedGraph = AdjacencyMatrixUndirectedGraph.apply(adjacencyListUndirectedGraph)
+  val adjacencyListUndirectedGraph: AdjacencyListUndirectedGraph[Int] = AdjacencyListUndirectedGraph(adjacencyList)
+  var adjacencyMatrix: AdjacencyMatrixUndirectedGraph = AdjacencyMatrixUndirectedGraph(adjacencyListUndirectedGraph)
 
 }

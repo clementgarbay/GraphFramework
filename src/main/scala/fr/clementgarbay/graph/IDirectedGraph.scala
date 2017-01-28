@@ -1,12 +1,18 @@
 package fr.clementgarbay.graph
 
-import scala.collection.{SortedSet, mutable}
 import scala.collection.immutable.ListMap
 
 /**
   * @author Clément Garbay
+  *
+  * @tparam T The type of the node id
   */
-trait IDirectedGraph extends IGraph {
+trait IDirectedGraph[T] extends IGraph[T] {
+
+  /**
+    * A list of tuple with starting node, ending node and the distance between both
+    */
+  val arcs: Set[(T, T, Double)]
 
   /**
     * The number of arcs in the graph
@@ -16,113 +22,149 @@ trait IDirectedGraph extends IGraph {
   /**
     * The inverse graph
     */
-  val inverse: IDirectedGraph
+  val inverse: IDirectedGraph[T]
 
   /**
     * The corresponding undirected graph from the directed graph
     */
-  val toUndirectedGraph: IUndirectedGraph
+  val toUndirectedGraph: IUndirectedGraph[T]
 
   /**
     * Check the strong connectivity of the graph
     */
-  val isConnected: Boolean = depthFirstSearch(0).size == nbNodes && inverse.depthFirstSearch(0).size == nbNodes
+  val isConnected: Boolean =
+    if (nodesIds.isEmpty) false
+    else depthFirstSearch(nodesIds.head).size == nbNodes && inverse.depthFirstSearch(nodesIds.head).size == nbNodes
 
   /**
     * Tests if two nodes are an arc
     *
-    * @param from The first node
-    * @param to   The second node
-    * @return True iff arc (from,to) figures in the graph
+    * @param from The id of the first node
+    * @param to   The id of the second node
+    * @return     True iff arc (from,to) figures in the graph
     */
-  def isArc(from: Int, to: Int): Boolean
+  def isArc(from: T, to: T): Boolean
 
   /**
     * Adds the arc (from,to) if it is not already present in the graph, requires from /= to
     *
-    * @param from The first node
-    * @param to   The second node
-    * @return A new graph with modification
+    * @param from     The first node
+    * @param to       The second node
+    * @param distance The distance between the two nodes
+    * @return         A new graph with the new arc
     */
-  def addArc(from: Int, to: Int): IDirectedGraph
+  def addArc(from: T, to: T, distance: Double): IDirectedGraph[T]
+
+  /**
+    * @see addArc(from: T, to: T, distance: Double)
+    */
+  def addArc(from: T, to: T): IDirectedGraph[T]
 
   /**
     * Remove the arc (from,to), if exists
     *
     * @param from The first node
     * @param to   The second node
-    * @return A new graph with modification
+    * @return     A new graph with modification
     */
-  def removeArc(from: Int, to: Int): IDirectedGraph
+  def removeArc(from: T, to: T): IDirectedGraph[T]
 
   /**
     * Get successors of a specific node
     *
-    * @param node The related node
-    * @return A int list representing successors of node
+    * @param nodeId The related node id
+    * @return       A list of tuple representing successors ids with distances from the node
     */
-  def getSuccessors(node: Int): Set[Int]
+  def getSuccessors(nodeId: T): Set[(T, Double)]
+
+  /**
+    * Get successors of a specific node
+    *
+    * @param nodeId The related node id
+    * @return       A list representing successors ids of the node
+    */
+  def getSuccessorsIds(nodeId: T): Set[T]
 
   /**
     * Get predecessors of a specific node
     *
-    * @param node The related node
-    * @return A int list representing predecessors of node
+    * @param nodeId The related node id
+    * @return       A list of tuple representing predecessors ids with distances to the node
     */
-  def getPredecessors(node: Int): Set[Int]
+  def getPredecessors(nodeId: T): Set[(T, Double)]
+
+  /**
+    * Get predecessors of a specific node
+    *
+    * @param nodeId The related node id
+    * @return       A list representing predecessors ids of the node
+    */
+  def getPredecessorsIds(nodeId: T): Set[T]
 
   /**
     * Explore a graph with the depth first search algorithm
     *
-    * @param startingNode The starting node
-    * @return All nodes reachable from the starting node
+    * @param startingNodeId The starting node id
+    * @return               All nodes ids reachable from the starting node
     */
-  def depthFirstSearch(startingNode: Int): Set[Int] = {
-    def depthFirstSearchRec(node: Int, visited: Set[Int]): Set[Int] = {
+  def depthFirstSearch(startingNodeId: T): Set[T] = {
+    def depthFirstSearchRec(node: T, visited: Set[T]): Set[T] = {
       if (visited contains node) visited
-      else getSuccessors(node).foldLeft(visited + node)((visitedNodes, successor) => depthFirstSearchRec(successor, visitedNodes))
+      else getSuccessorsIds(node).foldLeft(visited + node)((visitedNodes, successor) => depthFirstSearchRec(successor, visitedNodes))
     }
 
-    depthFirstSearchRec(startingNode, Set())
+    depthFirstSearchRec(startingNodeId, Set())
   }
 
   /**
     * Explore a graph with the breadth first search algorithm
     *
-    * @param startingNode The starting node
-    * @return All nodes reachable from the starting node
+    * @param startingNodeId The starting node id
+    * @return               All nodes ids reachable from the starting node
     */
-  def breadthFirstSearch(startingNode: Int): Set[Int] = {
-    def breadthFirstSearchRec(toVisit: Set[Int], visited: Set[Int]): Set[Int] = {
-      val successors = toVisit.flatMap(getSuccessors).diff(visited)
+  def breadthFirstSearch(startingNodeId: T): Set[T] = {
+    def breadthFirstSearchRec(toVisit: Set[T], visited: Set[T]): Set[T] = {
+      val successors = toVisit.flatMap(getSuccessorsIds).diff(visited)
       if (successors.isEmpty) visited
       else breadthFirstSearchRec(successors, visited ++ successors)
     }
 
-    breadthFirstSearchRec(Set(startingNode), Set(startingNode))
+    breadthFirstSearchRec(Set(startingNodeId), Set(startingNodeId))
+  }
+
+  /**
+    * Get all strongly connected components from a node id
+    *
+    * @param startingNodeId The starting node id
+    * @return
+    */
+  def getStronglyConnectedComponents(startingNodeId: T): Set[Set[T]] = {
+    val sortedEnd = ListMap(depthFirstSearchWithInfo(startingNodeId)._2.toSeq.sortWith(_._2 > _._2):_*)
+    val scc = inverse.depthFirstSearchWithInfo(sortedEnd.head._1, sortedEnd.keys.toSet)
+    scc._3
   }
 
   /**
     * GO AWAY VERY UGLY METHOD
     *
-    * @param startingNode
-    * @return
+    * TODO: refactor
+    *
+    * @param startingNodeId The starting node id
+    * @param listToFollow   A list of nodes ids to follow
+    * @return               (start, end, visited)
     */
-  def baseDfs(startingNode: Int, listToFollow: Set[Int] = nodesList): (Map[Int, Int], Map[Int, Int], Set[Set[Int]]) = {
+  private def depthFirstSearchWithInfo(startingNodeId: T, listToFollow: Set[T] = nodesIds): (Map[T, Int], Map[T, Int], Set[Set[T]]) = {
     var increment: Int = 0
-    var start: Map[Int, Int] = Map.empty
-    var end: Map[Int, Int] = Map.empty
+    var start: Map[T, Int] = Map.empty
+    var end: Map[T, Int] = Map.empty
 
-    def nodeDfs(node: Int, visited: Set[Int]): Set[Int] = {
-      var currentVisit = visited + node
-
+    def depthFirstSearchRec(node: T, visited: Set[T]): Set[T] = {
       increment += 1
       start += node -> increment
 
-      for (successor <- getSuccessors(node) if !(currentVisit contains successor)) {
-        currentVisit = currentVisit ++ nodeDfs(successor, currentVisit)
-
-      }
+      val currentVisit = getSuccessorsIds(node)
+        .diff(visited + node)
+        .foldLeft(visited + node)((acc, successor) => acc ++ depthFirstSearchRec(successor, acc))
 
       increment += 1
       end += node -> increment
@@ -130,47 +172,15 @@ trait IDirectedGraph extends IGraph {
       currentVisit
     }
 
-    var visited: Set[Set[Int]] = Set(nodeDfs(startingNode, Set.empty))
-    var nodeToVisit = diffKeepingOrder(listToFollow, visited.flatten)
+    var visited: Set[Set[T]] = Set(depthFirstSearchRec(startingNodeId, Set.empty))
 
-    print("First deep done")
-
-    for(node <- nodeToVisit if !(visited.flatten contains node)) {
-      visited = visited + nodeDfs(node, visited.flatten).diff(visited.flatten)
-    }
+    visited = listToFollow
+      .toList
+      .diff(visited.flatten.toList)
+      .filter(node => !(visited.flatten contains node))
+      .foldLeft(visited)((acc, node) => acc + depthFirstSearchRec(node, acc.flatten).diff(acc.flatten))
 
     (start, end, visited)
-  }
-
-  /**
-    * The scala diff method not keep the order of sets
-    *
-    * @param biggestSet
-    * @param smallestSet
-    * @return
-    */
-  def diffKeepingOrder(biggestSet: Set[Int], smallestSet: Set[Int]): mutable.Queue[Int] = {
-    var resultedSet: mutable.Queue[Int] = mutable.Queue.empty
-
-    for (element <- biggestSet if !(smallestSet contains element)) {
-      resultedSet.enqueue(element)
-    }
-
-    resultedSet
-  }
-
-  /**
-    * Get all strong connected components
-    *
-    * @param startingNode
-    * @return
-    */
-  def computeStrongConnectivity(startingNode: Int): Set[Set[Int]] = {
-    val sortedEnd = ListMap(baseDfs(startingNode)._2.toSeq.sortWith(_._2 > _._2):_*)
-
-    val strongComponents = inverse.baseDfs(sortedEnd.head._1, sortedEnd.keys.toSet)
-
-    strongComponents._3
   }
 
 }

@@ -3,7 +3,7 @@ package fr.clementgarbay.graph
 /**
   * @author Clément Garbay
   */
-trait IUndirectedGraph extends IGraph {
+trait IUndirectedGraph[T] extends IGraph[T] {
 
   /**
     * The number of edges in the graph
@@ -13,122 +13,88 @@ trait IUndirectedGraph extends IGraph {
   /**
     * Check the connectivity of the graph
     */
-  val isConnected: Boolean = depthFirstSearch(0).size == nbNodes
+  val isConnected: Boolean =
+    if (nodesIds.isEmpty) false
+    else depthFirstSearch(nodesIds.head).size == nbNodes
 
   /**
     * Tests if two nodes are a edge
     *
-    * @param from The first node
-    * @param to   The second node
+    * @param from The id of the first node
+    * @param to   The id of the second node
     * @return     True if there is an edge between x and y
     */
-  def isEdge(from: Int, to: Int): Boolean
+  def isEdge(from: T, to: T): Boolean
 
   /**
     * Adds edge (from,to) if not already present, requires from /= to
     *
-    * @param from The first node
-    * @param to   The second node
-    * @return     A new graph with modification
+    * @param from The id of the first node
+    * @param to   The id of the second node
+    * @param distance The distance between the two nodes
+    * @return     A new graph with the new edge
     */
-  def addEdge(from: Int, to: Int): IUndirectedGraph
+  def addEdge(from: T, to: T, distance: Double): IUndirectedGraph[T]
+
+  /**
+    * @see addEdge(from: T, to: T, distance: Double)
+    */
+  def addEdge(from: T, to: T): IUndirectedGraph[T]
 
   /**
     * Removes edge (from,to) if exists
     *
-    * @param from The first node
-    * @param to   The second node
+    * @param from The id of the first node
+    * @param to   The id of the second node
     * @return     A new graph with modification
     */
-  def removeEdge(from: Int, to: Int): IUndirectedGraph
+  def removeEdge(from: T, to: T): IUndirectedGraph[T]
 
   /**
     * Get neighbors of a specific node
     *
-    * @param node The related node
-    * @return     A int list representing neighbors of node
+    * @param nodeId The related node id
+    * @return       A list of tuple representing neighbors ids with distances from the node
     */
-  def getNeighbors(node: Int): Set[Int]
+  def getNeighbors(nodeId: T): Set[(T, Double)]
+
+  /**
+    * Get neighbors of a specific node
+    *
+    * @param nodeId The related node id
+    * @return       A list representing neighbors ids of node
+    */
+  def getNeighborsIds(nodeId: T): Set[T]
 
   /**
     * Explore a graph with the depth first search algorithm
     *
-    * @param startingNode The starting node
-    * @return             All nodes reachable from the starting node
+    * @param startingNodeId The starting node id
+    * @return               All nodes ids reachable from the starting node
     */
-  def depthFirstSearch(startingNode: Int): Set[Int] = {
-    def depthFirstSearchRec(node: Int, visited: Set[Int]): Set[Int] = {
+  def depthFirstSearch(startingNodeId: T): Set[T] = {
+    def depthFirstSearchRec(node: T, visited: Set[T]): Set[T] = {
       if (visited contains node) visited
-      else getNeighbors(node).foldLeft(visited + node)((visitedNodes, neighbor) => depthFirstSearchRec(neighbor, visitedNodes))
+      else getNeighborsIds(node).foldLeft(visited + node)((visitedNodes, neighbor) => depthFirstSearchRec(neighbor, visitedNodes))
     }
 
-    depthFirstSearchRec(startingNode, Set())
+    depthFirstSearchRec(startingNodeId, Set())
   }
 
   /**
     * Explore a graph with the breadth first search algorithm
     *
-    * @param startingNode The starting node
-    * @return             All nodes reachable from the starting node
+    * @param startingNodeId The starting node id
+    * @return               All nodes ids reachable from the starting node
     */
-  def breadthFirstSearch(startingNode: Int): Set[Int] = {
-    def breadthFirstSearchRec(toVisit: Set[Int], visited: Set[Int]): Set[Int] = {
-      val neighbors = toVisit.flatMap(getNeighbors).diff(visited)
+  def breadthFirstSearch(startingNodeId: T): Set[T] = {
+    def breadthFirstSearchRec(toVisit: Set[T], visited: Set[T]): Set[T] = {
+      val neighbors = toVisit.flatMap(getNeighborsIds).diff(visited)
       if (neighbors.isEmpty) visited
       else breadthFirstSearchRec(neighbors, visited ++ neighbors)
     }
 
-    breadthFirstSearchRec(Set(startingNode), Set(startingNode))
+    breadthFirstSearchRec(Set(startingNodeId), Set(startingNodeId))
   }
-
-//  def exploreGraph(): Set[IUndirectedGraph] = {
-//    def exploreNode(node: Int, visited: Set[Int]): Set[Int] = {
-//      var currentVisit = visited + node
-//      for
-//    }
-//
-//    var visited: Set[Int] = Set.empty
-//    for (node <- 0 until nbNodes if !(visited contains node)){
-//      exploreNode(node, visited)
-//    }
-//  }
-//
-//  void explorerGraphe() {
-//    Set<Sommet> atteint = new HashSet<Sommet>()
-//    visit[] = 0
-//    for (Sommet s : sommets) {
-//      if (!atteint.contains(s)) {
-//        explorerSommet(s, atteint)
-//      }
-//    }
-//  }
-//
-//  void explorerSommet(Sommet s, Set<Sommets> a) {
-//    a.add(s)
-//
-//    for (Sommet t : s.voisins()) {
-//      if (!a.contains(t)) {
-//        explorerSommet(t,a)
-//      }
-//    }
-//    fin.add(s)
-//  }
-
-//  def explore(): Set[Set[Int]] = {
-//
-//    val first = depthFirstSearch(0)
-//    var res = Set(first)
-//
-//    var notVisited = (0 until nbNodes).diff(first.toSeq)
-//
-//    while (notVisited.nonEmpty) {
-//      val node = notVisited.collectFirst({case x: Int => x})
-//      val visited = depthFirstSearch(node.get)
-//      res = res ++ visited
-//      notVisited = (0 until nbNodes).diff(visited.toSeq)
-//    }
-//
-//    res
-//  }
 
 }

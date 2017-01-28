@@ -37,10 +37,10 @@ object GraphTools {
     * @param nbEdges  the desired number of edges
     * @return
     */
-  def generateDirectedGraph(order: Int, nbEdges: Int): AdjacencyListDirectedGraph = {
+  def generateDirectedGraph(order: Int, nbEdges: Int): AdjacencyListDirectedGraph[Int] = {
     val edges: Set[(Int,Int)] = getRandomEdges(nbEdges, order)
 
-    val nodes: Set[NodeDirected] = (0 until order).map(nodeId => {
+    val nodes: Set[NodeDirected[Int]] = (0 until order).map(nodeId => {
       NodeDirected(nodeId, edges.filter(_._1 == nodeId).map(_._2))
     }).toSet
 
@@ -54,7 +54,7 @@ object GraphTools {
     * @param nbEdges  the desired number of edges
     * @return
     */
-  def generateUndirectedGraph(order: Int, nbEdges: Int): AdjacencyListUndirectedGraph = {
+  def generateUndirectedGraph(order: Int, nbEdges: Int): AdjacencyListUndirectedGraph[Int] = {
     generateDirectedGraph(order,nbEdges).toUndirectedGraph
   }
 
@@ -76,11 +76,11 @@ object GraphTools {
     println(graph.map(_.mkString("  ")).mkString("\n"))
   }
 
-  def displayGraph(graph: AdjacencyListDirectedGraph): Unit = {
+  def displayGraph[T](graph: AdjacencyListDirectedGraph[T]): Unit = {
     println(graph.nodes.map(node => node.id + " -> " + node.successors.mkString(", ")).mkString("\n"))
   }
 
-  def displayGraph(graph: AdjacencyListUndirectedGraph): Unit = {
+  def displayGraph[T](graph: AdjacencyListUndirectedGraph[T]): Unit = {
     println(graph.nodes.map(node => node.id + " -> " + node.neighbors.mkString(", ")).mkString("\n"))
   }
 

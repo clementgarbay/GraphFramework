@@ -47,27 +47,27 @@ class AdjacencyMatrixDirectedGraphTest extends WordSpec {
     }
     "be a int list of 1, 2" when {
       "getSuccessors is called with 1 in parameter" in new ContextMatrixDirected {
-        assert(graph.getSuccessors(0) == Set(1, 2))
+        assert(graph.getSuccessorsIds(0) == Set(1, 2))
       }
     }
     "be a int list of 3" when {
       "getSuccessors is called with 1 in parameter" in new ContextMatrixDirected {
-        assert(graph.getSuccessors(1) == Set(3))
+        assert(graph.getSuccessorsIds(1) == Set(3))
       }
     }
     "be a int list of 0" when {
       "getSuccessors is called with 2 in parameter" in new ContextMatrixDirected {
-        assert(graph.getSuccessors(2) == Set(1))
+        assert(graph.getSuccessorsIds(2) == Set(1))
       }
     }
     "be a int list of 1,3" when {
       "getPredecessors is called with 0 in parameter" in new ContextMatrixDirected {
-        assert(graph.getPredecessors(0) == Set(3))
+        assert(graph.getPredecessorsIds(0) == Set(3))
       }
     }
     "be a int list of 0,2" when {
       "getPredecessors is called with 1 in parameter" in new ContextMatrixDirected {
-        assert(graph.getPredecessors(1) == Set(0, 2))
+        assert(graph.getPredecessorsIds(1) == Set(0, 2))
       }
     }
     "be the correct directed adjacency list graph inverse" when {
@@ -144,8 +144,8 @@ trait ContextMatrixDirected {
     (3, Set(0, 2))
   )
 
-  val adjacencyListDirectedGraph: AdjacencyListDirectedGraph = AdjacencyListDirectedGraph.apply(adjacencyList)
-  var adjacencyMatrix: AdjacencyMatrixDirectedGraph = AdjacencyMatrixDirectedGraph.apply(adjacencyListDirectedGraph)
+  val adjacencyListDirectedGraph: AdjacencyListDirectedGraph[Int] = AdjacencyListDirectedGraph(adjacencyList)
+  var adjacencyMatrix: AdjacencyMatrixDirectedGraph = AdjacencyMatrixDirectedGraph(adjacencyListDirectedGraph)
 
   val graphMatrixUndirected = List(
     List(0, 1, 1, 1),

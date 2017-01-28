@@ -6,13 +6,23 @@ package fr.clementgarbay.graph
 object Main extends App {
 
   override def main(args: Array[String]): Unit = {
-    val binaryHeap = BinaryHeap(List(4,10,6,12,14,9))
+//    val binaryHeap = BinaryHeap(List(4,10,6,12,14,9))
+//
+//    println(binaryHeap)
+//    println(binaryHeap.add(1))
+//    println(binaryHeap.removeRoot())
 
-    println(binaryHeap)
-    println(binaryHeap.add(1))
-    println(binaryHeap.removeRoot())
+//    val graph1 = GraphTools.generateUndirectedGraph(10,10)
 
-//    val graph = GraphTools.generateUndirectedGraph(10,10)
+
+    val graph = AdjacencyListDirectedGraph(Set(
+      NodeDirected(0, Set(1, 2)),
+      NodeDirected(1, Set(0, 3)),
+      NodeDirected(2, Set(1)),
+      NodeDirected(3, Set(0, 2))
+    ))
+
+    print(graph.nbNodes)
 
 //    println(graph.depthFirstSearch(0))
 
