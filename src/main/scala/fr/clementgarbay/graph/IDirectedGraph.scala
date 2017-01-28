@@ -133,6 +133,33 @@ trait IDirectedGraph[T] extends IGraph[T] {
   }
 
   /**
+    * Compute shortest distances from a node to all other node in the graph.
+    * Using Bellman-Ford algorithm.
+    *
+    * TODO: use a `Path` object to store parents ?
+    * TODO: add tests
+    *
+    * @param startingNodeId The starting node id
+    * @return               (distances, parents)
+    */
+  def getShortestPathWithBellmanFord(startingNodeId: T): (Map[T, Double], Map[T, Option[T]]) = {
+    var distances: Map[T, Double] = nodesIds.map(nodeId => nodeId -> Double.MaxValue).toMap
+    var parents: Map[T, Option[T]] = nodesIds.map(nodeId => nodeId -> Option.empty).toMap
+
+    distances = distances + (startingNodeId -> 0.0)
+
+    for {
+      _ <- 1 until nbNodes - 1
+      (n1, n2, distance) <- arcs if n2 != startingNodeId && distances(n2) > distances(n1) + distance
+    } {
+      distances = distances + (n2 -> (distances(n1) + distance))
+      parents = parents + (n2 -> Some(n1))
+    }
+
+    (distances, parents)
+  }
+
+  /**
     * Get all strongly connected components from a node id
     *
     * @param startingNodeId The starting node id
