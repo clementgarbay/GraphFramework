@@ -173,22 +173,4 @@ trait IDirectedGraph extends IGraph {
     strongComponents._3
   }
 
-//  def dfsWithFinalDate(startingNode: Int): Unit = {
-//    def nodeDfs(node: Int, visited: Set[Int]): Set[Int] = {
-//      var currentVisit = visited + node
-//      for (successor <- getSuccessors(node) if !(currentVisit contains successor)) {
-//        currentVisit = currentVisit ++ nodeDfs(successor, currentVisit)
-//      }
-//      currentVisit
-//    }
-//
-//    var visited: Set[Set[Int]] = Set(nodeDfs(startingNode, Set.empty))
-//
-//
-//    for(node <- nodesList.diff(visited.flatten) if !(visited.flatten contains node)) {
-//      var currentVisit = nodeDfs(node, visited.flatten)
-//
-//      visited = visited + currentVisit.diff(visited.flatten)
-//    }
-//  }
 }
