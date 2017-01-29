@@ -6,6 +6,10 @@ package fr.clementgarbay.graph
 case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) extends IUndirectedGraph[T] {
 
   override lazy val nbNodes: Int = nodes.size
+  override lazy val edges: List[Edge[T]] =
+    nodes.flatMap(node => node.neighbors.map(neighbor => {
+      List(Edge(node.id, neighbor.to, neighbor.distance), Edge(neighbor.to, node.id, neighbor.distance))
+    })).flatten
   override lazy val nbEdges: Int = nodes.map(_.neighbors.size).sum / 2
   override lazy val nodesIds: List[T] = nodes.map(_.id)
 
@@ -24,9 +28,9 @@ case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) exten
     if (from == to) this
     else AdjacencyListUndirectedGraph(nodes.map {
       case node if node.id == from =>
-        node.copy(neighbors = node.neighbors + ((to, distance)))
+        node.copy(neighbors = node.neighbors + SemiEdge(to, distance))
       case node if node.id == to =>
-        node.copy(neighbors = node.neighbors + ((from, distance)))
+        node.copy(neighbors = node.neighbors + SemiEdge(from, distance))
       case node => node
     })
 
@@ -36,15 +40,15 @@ case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) exten
   override def removeEdge(from: T, to: T): IUndirectedGraph[T] =
     AdjacencyListUndirectedGraph(nodes.map {
       case node if node.id == from =>
-        node.copy(neighbors = node.neighbors.filterNot(_._1 == to))
+        node.copy(neighbors = node.neighbors.filterNot(_.to == to))
       case node if node.id == to =>
-        node.copy(neighbors = node.neighbors.filterNot(_._1 == from))
+        node.copy(neighbors = node.neighbors.filterNot(_.to == from))
       case node => node
     })
 
-  override def getNeighbors(nodeId: T): Set[(T, Double)] = nodes.find(_.id == nodeId).map(_.neighbors).getOrElse(Set.empty)
+  override def getNeighbors(nodeId: T): Set[SemiEdge[T]] = nodes.find(_.id == nodeId).map(_.neighbors).getOrElse(Set.empty)
 
-  override def getNeighborsIds(nodeId: T): Set[T] = getNeighbors(nodeId).map(_._1)
+  override def getNeighborsIds(nodeId: T): Set[T] = getNeighbors(nodeId).map(_.to)
 
 }
 
@@ -53,7 +57,7 @@ object AdjacencyListUndirectedGraph {
   implicit def apply(matrix: => List[List[Int]]): AdjacencyListUndirectedGraph[Int] = {
     AdjacencyListUndirectedGraph(matrix.zipWithIndex.map({
       case (neighbors, j) => NodeUndirected(j, neighbors.zipWithIndex.collect({
-        case (value, i) if value == 1 => (i, 1.0)
+        case (value, i) if value == 1 => SemiEdge(i)
       }).toSet)
     }))
   }

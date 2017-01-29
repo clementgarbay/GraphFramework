@@ -8,10 +8,10 @@ package fr.clementgarbay.graph
 case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirectedGraph[Int] {
 
   override val nbNodes: Int = matrix.size
-  override lazy val arcs: List[(Int, Int, Double)] =
+  override lazy val arcs: List[Arc[Int]] =
     matrix.zipWithIndex.collect({
       case (successors, j) => successors.zipWithIndex.collect({
-        case (value, i) if value == 1 => (j, i, 1.0)
+        case (value, i) if value == 1 => Arc(j, i)
       }).toSet
     }).flatten
   override lazy val nbArcs: Int = matrix.map(_.count(_ == 1)).sum // arcs.size
@@ -38,8 +38,10 @@ case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirect
 
   override def removeArc(from: Int, to: Int): IDirectedGraph[Int] = update(from, to, 0)
 
-  override def getSuccessors(nodeId: Int): Set[(Int, Double)] =
-    getSuccessorsIds(nodeId).map(node => (node, 1.0))
+  override def getDistance(from: Int, to: Int): Double = 1
+
+  override def getSuccessors(nodeId: Int): Set[SemiArc[Int]] =
+    getSuccessorsIds(nodeId).map(node => SemiArc(node))
 
   override def getSuccessorsIds(nodeId: Int): Set[Int] =
     matrix.lift(nodeId)
@@ -47,7 +49,7 @@ case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirect
       .collect { case (value, index) if value == 1 => index }
       .toSet
 
-  override def getPredecessors(nodeId: Int): Set[(Int, Double)] = getPredecessorsIds(nodeId).map(node => (node, 1.0))
+  override def getPredecessors(nodeId: Int): Set[SemiArc[Int]] = getPredecessorsIds(nodeId).map(node => SemiArc(node))
 
   override def getPredecessorsIds(nodeId: Int): Set[Int] = matrix.indices.filter(isArc(_, nodeId)).toSet
 

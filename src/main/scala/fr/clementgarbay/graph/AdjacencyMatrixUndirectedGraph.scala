@@ -8,7 +8,13 @@ package fr.clementgarbay.graph
 case class AdjacencyMatrixUndirectedGraph(matrix: List[List[Int]]) extends IUndirectedGraph[Int] {
 
   override val nbNodes: Int = matrix.size
-  override lazy val nbEdges: Int = matrix.map(_.count(_ == 1)).sum / 2
+  override lazy val edges: List[Edge[Int]] =
+    matrix.zipWithIndex.collect({
+      case (neighbors, j) => neighbors.zipWithIndex.collect({
+        case (value, i) if value == 1 => List(Edge(i, j), Edge(j, i))
+      }).toSet.flatten
+    }).flatten
+  override lazy val nbEdges: Int = matrix.map(_.count(_ == 1)).sum / 2 // edges.size
   override lazy val nodesIds: List[Int] = matrix.indices.toList
 
   override val toAdjacencyMatrix: List[List[Int]] = matrix
@@ -23,7 +29,7 @@ case class AdjacencyMatrixUndirectedGraph(matrix: List[List[Int]]) extends IUndi
 
   override def removeEdge(from: Int, to: Int): IUndirectedGraph[Int] = update(from, to, 0)
 
-  override def getNeighbors(nodeId: Int): Set[(Int, Double)] = getNeighborsIds(nodeId).map(node => (node, 1.0))
+  override def getNeighbors(nodeId: Int): Set[SemiEdge[Int]] = getNeighborsIds(nodeId).map(node => SemiEdge(node))
 
   override def getNeighborsIds(nodeId: Int): Set[Int] =
     matrix.lift(nodeId)

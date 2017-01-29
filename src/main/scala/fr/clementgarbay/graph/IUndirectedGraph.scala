@@ -6,6 +6,11 @@ package fr.clementgarbay.graph
 trait IUndirectedGraph[T] extends IGraph[T] {
 
   /**
+    * A list of edges with starting node, ending node and the distance between both
+    */
+  val edges: List[Edge[T]]
+
+  /**
     * The number of edges in the graph
     */
   val nbEdges: Int
@@ -56,7 +61,7 @@ trait IUndirectedGraph[T] extends IGraph[T] {
     * @param nodeId The related node id
     * @return       A list of tuple representing neighbors ids with distances from the node
     */
-  def getNeighbors(nodeId: T): Set[(T, Double)]
+  def getNeighbors(nodeId: T): Set[SemiEdge[T]]
 
   /**
     * Get neighbors of a specific node

@@ -10,9 +10,9 @@ import scala.collection.immutable.ListMap
 trait IDirectedGraph[T] extends IGraph[T] {
 
   /**
-    * A list of tuple with starting node, ending node and the distance between both
+    * A list of arcs with starting node, ending node and the distance between both
     */
-  val arcs: List[(T, T, Double)]
+  val arcs: List[Arc[T]]
 
   /**
     * The number of arcs in the graph
@@ -70,12 +70,21 @@ trait IDirectedGraph[T] extends IGraph[T] {
   def removeArc(from: T, to: T): IDirectedGraph[T]
 
   /**
+    * Get the distance between two nodes
+    *
+    * @param from The id of the first node
+    * @param to   The id of the second node
+    * @return
+    */
+  def getDistance(from: T, to: T): Double
+
+  /**
     * Get successors of a specific node
     *
     * @param nodeId The related node id
     * @return       A list of tuple representing successors ids with distances from the node
     */
-  def getSuccessors(nodeId: T): Set[(T, Double)]
+  def getSuccessors(nodeId: T): Set[SemiArc[T]]
 
   /**
     * Get successors of a specific node
@@ -91,7 +100,7 @@ trait IDirectedGraph[T] extends IGraph[T] {
     * @param nodeId The related node id
     * @return       A list of tuple representing predecessors ids with distances to the node
     */
-  def getPredecessors(nodeId: T): Set[(T, Double)]
+  def getPredecessors(nodeId: T): Set[SemiArc[T]]
 
   /**
     * Get predecessors of a specific node
@@ -142,21 +151,25 @@ trait IDirectedGraph[T] extends IGraph[T] {
     * @param startingNodeId The starting node id
     * @return               (distances, parents)
     */
-  def getShortestPathWithBellmanFord(startingNodeId: T): (Map[T, Double], Map[T, Option[T]]) = {
+  def getShortestPathWithBellmanFord(startingNodeId: T): (Map[T, Double], List[Path[T]]) = {
     var distances: Map[T, Double] = nodesIds.map(nodeId => nodeId -> Double.MaxValue).toMap
-    var parents: Map[T, Option[T]] = nodesIds.map(nodeId => nodeId -> Option.empty).toMap
+    var parents: Map[T, Option[SemiArc[T]]] = nodesIds.map(nodeId => nodeId -> Option.empty).toMap
 
     distances = distances + (startingNodeId -> 0.0)
 
     for {
       _ <- 1 until nbNodes - 1
-      (n1, n2, distance) <- arcs if n2 != startingNodeId && distances(n2) > distances(n1) + distance
+      arc <- arcs if arc.to != startingNodeId && distances(arc.to) > distances(arc.from) + arc.distance
     } {
-      distances = distances + (n2 -> (distances(n1) + distance))
-      parents = parents + (n2 -> Some(n1))
+      distances = distances + (arc.to -> (distances(arc.from) + arc.distance))
+      parents = parents + (arc.to -> Some(SemiArc(arc.from, getDistance(arc.from, arc.to))))
     }
 
-    (distances, parents)
+    val paths = nodesIds
+      .filter(_ != startingNodeId)
+      .map(nodeId => Path.getPathFromParents(startingNodeId, nodeId, parents))
+
+    (distances, paths)
   }
 
   /**
