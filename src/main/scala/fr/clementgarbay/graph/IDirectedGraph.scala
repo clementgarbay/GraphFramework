@@ -165,7 +165,7 @@ trait IDirectedGraph[T] extends IGraph[T] {
     * @param startingNodeId The starting node id
     * @return
     */
-  def getStronglyConnectedComponents(startingNodeId: T): List[List[T]] = {
+  def getStronglyConnectedComponents(startingNodeId: T): Set[Set[T]] = {
     val sortedEnd = ListMap(depthFirstSearchWithInfo(startingNodeId)._2.toSeq.sortWith(_._2 > _._2):_*)
     val scc = inverse.depthFirstSearchWithInfo(sortedEnd.head._1, sortedEnd.keys.toList)
     scc._3
@@ -180,19 +180,18 @@ trait IDirectedGraph[T] extends IGraph[T] {
     * @param listToFollow   A list of nodes ids to follow
     * @return               (start, end, visited)
     */
-  private def depthFirstSearchWithInfo(startingNodeId: T, listToFollow: List[T] = nodesIds): (Map[T, Int], Map[T, Int], List[List[T]]) = {
+  private def depthFirstSearchWithInfo(startingNodeId: T, listToFollow: List[T] = nodesIds): (Map[T, Int], Map[T, Int], Set[Set[T]]) = {
     var increment: Int = 0
     var start: Map[T, Int] = Map.empty
     var end: Map[T, Int] = Map.empty
 
-    def depthFirstSearchRec(node: T, visited: List[T]): List[T] = {
+    def depthFirstSearchRec(node: T, visited: Set[T]): Set[T] = {
       increment += 1
       start += node -> increment
 
       val currentVisit = getSuccessorsIds(node)
-        .toList
-        .diff(visited :+ node)
-        .foldLeft(visited :+ node)((acc, successor) => acc ++ depthFirstSearchRec(successor, acc))
+        .diff(visited + node)
+        .foldLeft(visited + node)((acc, successor) => acc ++ depthFirstSearchRec(successor, acc))
 
       increment += 1
       end += node -> increment
@@ -200,12 +199,15 @@ trait IDirectedGraph[T] extends IGraph[T] {
       currentVisit
     }
 
-    var visited: List[List[T]] = List(depthFirstSearchRec(startingNodeId, List.empty))
+    var visited: Set[Set[T]] = Set(depthFirstSearchRec(startingNodeId, Set.empty))
 
     visited = listToFollow
-      .diff(visited.flatten)
+      .diff(visited.toList.flatten)
       .filter(node => !(visited.flatten contains node))
-      .foldLeft(visited)((acc, node) => acc :+ depthFirstSearchRec(node, acc.flatten).diff(acc.flatten))
+      .foldLeft(visited)((acc, node) => {
+        val res = depthFirstSearchRec(node, acc.flatten).diff(acc.flatten)
+        if (res.nonEmpty) acc + res else acc
+      })
 
     (start, end, visited)
   }
