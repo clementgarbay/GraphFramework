@@ -9,7 +9,7 @@ case class AdjacencyMatrixUndirectedGraph(matrix: List[List[Int]]) extends IUndi
 
   override val nbNodes: Int = matrix.size
   override lazy val nbEdges: Int = matrix.map(_.count(_ == 1)).sum / 2
-  override lazy val nodesIds: Set[Int] = matrix.indices.toSet
+  override lazy val nodesIds: List[Int] = matrix.indices.toList
 
   override val toAdjacencyMatrix: List[List[Int]] = matrix
 

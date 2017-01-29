@@ -8,14 +8,14 @@ package fr.clementgarbay.graph
 case class AdjacencyMatrixDirectedGraph(matrix: List[List[Int]]) extends IDirectedGraph[Int] {
 
   override val nbNodes: Int = matrix.size
-  override lazy val arcs: Set[(Int, Int, Double)] =
+  override lazy val arcs: List[(Int, Int, Double)] =
     matrix.zipWithIndex.collect({
       case (successors, j) => successors.zipWithIndex.collect({
         case (value, i) if value == 1 => (j, i, 1.0)
       }).toSet
-    }).toSet.flatten
+    }).flatten
   override lazy val nbArcs: Int = matrix.map(_.count(_ == 1)).sum // arcs.size
-  override lazy val nodesIds: Set[Int] = matrix.indices.toSet
+  override lazy val nodesIds: List[Int] = matrix.indices.toList
 
   override val toAdjacencyMatrix: List[List[Int]] = matrix
 

@@ -20,5 +20,5 @@ trait IGraph[T] {
   /**
     * Return the list of existing nodes ids in the graph
     */
-  val nodesIds: Set[T]
+  val nodesIds: List[T]
 }

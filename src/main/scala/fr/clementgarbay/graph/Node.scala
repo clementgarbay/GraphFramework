@@ -19,9 +19,14 @@ case class NodeDirected[T](id: T, successors: Set[(T, Double)]) {
 }
 
 object NodeDirected {
-  // By default, the distance is 1 if it isn't mentioned
-  implicit def apply[T](id: T, successors: => Set[T]): NodeDirected[T] =
+
+  /**
+    * Helper to create NodeDirected without distance.
+    * By default, the distance is 1.
+    */
+  def from[T](id: T, successors: Set[T]): NodeDirected[T] =
     NodeDirected(id, successors.map(nodeId => (nodeId, 1.0)))
+
 }
 
 
@@ -38,8 +43,13 @@ case class NodeUndirected[T](id: T, neighbors: Set[(T, Double)]) {
 }
 
 object NodeUndirected {
-  // By default, the distance is 1 if it isn't mentioned
-  implicit def apply[T](id: T, neighbors: => Set[T]): NodeUndirected[T] =
+
+  /**
+    * Helper to create NodeDirected without distance.
+    * By default, the distance is 1.
+    */
+  def from[T](id: T, neighbors: Set[T]): NodeUndirected[T] =
     NodeUndirected(id, neighbors.map(nodeId => (nodeId, 1.0)))
+
 }
 

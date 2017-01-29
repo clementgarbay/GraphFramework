@@ -40,9 +40,9 @@ object GraphTools {
   def generateDirectedGraph(order: Int, nbEdges: Int): AdjacencyListDirectedGraph[Int] = {
     val edges: Set[(Int,Int)] = getRandomEdges(nbEdges, order)
 
-    val nodes: Set[NodeDirected[Int]] = (0 until order).map(nodeId => {
-      NodeDirected(nodeId, edges.filter(_._1 == nodeId).map(_._2))
-    }).toSet
+    val nodes: List[NodeDirected[Int]] = (0 until order).map(nodeId => {
+      NodeDirected.from(nodeId, edges.filter(_._1 == nodeId).map(_._2))
+    }).toList
 
     AdjacencyListDirectedGraph(nodes)
   }

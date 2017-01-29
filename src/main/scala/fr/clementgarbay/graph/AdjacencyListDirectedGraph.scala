@@ -5,20 +5,22 @@ package fr.clementgarbay.graph
   *
   * @tparam T The type of the node id
   */
-case class AdjacencyListDirectedGraph[T](nodes: Set[NodeDirected[T]]) extends IDirectedGraph[T] {
+case class AdjacencyListDirectedGraph[T](nodes: List[NodeDirected[T]]) extends IDirectedGraph[T] {
 
   override lazy val nbNodes: Int = nodes.size
-  override lazy val arcs: Set[(T, T, Double)] =
+  override lazy val arcs: List[(T, T, Double)] =
     nodes.flatMap(node => node.successors.map(successor => (node.id, successor._1, successor._2)))
-  override lazy val nbArcs: Int = nodes.toList.map(_.successors.size).sum // arcs.size
-  override lazy val nodesIds: Set[T] = nodes.map(_.id)
+  override lazy val nbArcs: Int = nodes.map(_.successors.size).sum // arcs.size
+  override lazy val nodesIds: List[T] = nodes.map(_.id)
 
-  override lazy val toAdjacencyMatrix: List[List[Int]] = ???
-//    (0 until nodes.size).map { i =>
-//      (0 until nodes.size).map { j =>
-//        isArc(i,j).toInt
-//      }.toList
-//    }.toList
+  override lazy val toAdjacencyMatrix: List[List[Int]] =
+    nodes.indices.map { i =>
+      nodes.indices.map { j =>
+        val nodeI = nodes(i)
+        val nodeJ = nodes(j)
+        isArc(nodeI.id, nodeJ.id).toInt
+      }.toList
+    }.toList
 
   override lazy val inverse: IDirectedGraph[T] =
     AdjacencyListDirectedGraph(
@@ -57,24 +59,24 @@ case class AdjacencyListDirectedGraph[T](nodes: Set[NodeDirected[T]]) extends ID
   override def getSuccessorsIds(nodeId: T): Set[T] = getSuccessors(nodeId).map(_._1)
 
   override def getPredecessors(nodeId: T): Set[(T, Double)] =
-    nodes.filter(_.successorsIds contains nodeId).map(node => (node.id, node.successors.find(_._1 == nodeId).get._2))
+    nodes.filter(_.successorsIds contains nodeId).map(node => (node.id, node.successors.find(_._1 == nodeId).get._2)).toSet
 
-  override def getPredecessorsIds(nodeId: T): Set[T] = nodes.filter(_.successorsIds contains nodeId).map(_.id)
+  override def getPredecessorsIds(nodeId: T): Set[T] = nodes.filter(_.successorsIds contains nodeId).map(_.id).toSet
 
 }
 
 object AdjacencyListDirectedGraph {
 
-  implicit def apply(matrix: List[List[Int]]): AdjacencyListDirectedGraph[Int] =
+  implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListDirectedGraph[T] =
+    AdjacencyListDirectedGraph(adjacencyList.map({
+      case (id, successors) => NodeDirected.from(id, successors)
+    }).toList)
+
+  def fromMatrix(matrix: List[List[Int]]): AdjacencyListDirectedGraph[Int] =
     AdjacencyListDirectedGraph(matrix.zipWithIndex.collect({
       case (successors, j) => NodeDirected(j, successors.zipWithIndex.collect({
         case (value, i) if value == 1 => (i, 1.0)
       }).toSet)
-    }).toSet)
-
-  implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListDirectedGraph[T] =
-    AdjacencyListDirectedGraph(adjacencyList.map({
-      case (id, successors) => NodeDirected(id, successors)
-    }).toSet)
+    }))
 
 }

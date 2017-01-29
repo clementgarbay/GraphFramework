@@ -12,7 +12,7 @@ trait IDirectedGraph[T] extends IGraph[T] {
   /**
     * A list of tuple with starting node, ending node and the distance between both
     */
-  val arcs: Set[(T, T, Double)]
+  val arcs: List[(T, T, Double)]
 
   /**
     * The number of arcs in the graph
@@ -32,7 +32,7 @@ trait IDirectedGraph[T] extends IGraph[T] {
   /**
     * Check the strong connectivity of the graph
     */
-  val isConnected: Boolean =
+  lazy val isConnected: Boolean =
     if (nodesIds.isEmpty) false
     else depthFirstSearch(nodesIds.head).size == nbNodes && inverse.depthFirstSearch(nodesIds.head).size == nbNodes
 
@@ -165,9 +165,9 @@ trait IDirectedGraph[T] extends IGraph[T] {
     * @param startingNodeId The starting node id
     * @return
     */
-  def getStronglyConnectedComponents(startingNodeId: T): Set[Set[T]] = {
+  def getStronglyConnectedComponents(startingNodeId: T): List[List[T]] = {
     val sortedEnd = ListMap(depthFirstSearchWithInfo(startingNodeId)._2.toSeq.sortWith(_._2 > _._2):_*)
-    val scc = inverse.depthFirstSearchWithInfo(sortedEnd.head._1, sortedEnd.keys.toSet)
+    val scc = inverse.depthFirstSearchWithInfo(sortedEnd.head._1, sortedEnd.keys.toList)
     scc._3
   }
 
@@ -180,18 +180,19 @@ trait IDirectedGraph[T] extends IGraph[T] {
     * @param listToFollow   A list of nodes ids to follow
     * @return               (start, end, visited)
     */
-  private def depthFirstSearchWithInfo(startingNodeId: T, listToFollow: Set[T] = nodesIds): (Map[T, Int], Map[T, Int], Set[Set[T]]) = {
+  private def depthFirstSearchWithInfo(startingNodeId: T, listToFollow: List[T] = nodesIds): (Map[T, Int], Map[T, Int], List[List[T]]) = {
     var increment: Int = 0
     var start: Map[T, Int] = Map.empty
     var end: Map[T, Int] = Map.empty
 
-    def depthFirstSearchRec(node: T, visited: Set[T]): Set[T] = {
+    def depthFirstSearchRec(node: T, visited: List[T]): List[T] = {
       increment += 1
       start += node -> increment
 
       val currentVisit = getSuccessorsIds(node)
-        .diff(visited + node)
-        .foldLeft(visited + node)((acc, successor) => acc ++ depthFirstSearchRec(successor, acc))
+        .toList
+        .diff(visited :+ node)
+        .foldLeft(visited :+ node)((acc, successor) => acc ++ depthFirstSearchRec(successor, acc))
 
       increment += 1
       end += node -> increment
@@ -199,13 +200,12 @@ trait IDirectedGraph[T] extends IGraph[T] {
       currentVisit
     }
 
-    var visited: Set[Set[T]] = Set(depthFirstSearchRec(startingNodeId, Set.empty))
+    var visited: List[List[T]] = List(depthFirstSearchRec(startingNodeId, List.empty))
 
     visited = listToFollow
-      .toList
-      .diff(visited.flatten.toList)
+      .diff(visited.flatten)
       .filter(node => !(visited.flatten contains node))
-      .foldLeft(visited)((acc, node) => acc + depthFirstSearchRec(node, acc.flatten).diff(acc.flatten))
+      .foldLeft(visited)((acc, node) => acc :+ depthFirstSearchRec(node, acc.flatten).diff(acc.flatten))
 
     (start, end, visited)
   }
