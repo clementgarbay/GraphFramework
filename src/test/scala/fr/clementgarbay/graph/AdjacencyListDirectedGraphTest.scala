@@ -81,7 +81,7 @@ class AdjacencyListDirectedGraphTest extends WordSpec {
     }
     "initialize a directed adjacency list graph" when {
       "from adjacency matrix representation" in new ContextDirected {
-        assert(AdjacencyListDirectedGraph.fromMatrix(graphMatrix) == graph)
+        assert(AdjacencyListDirectedGraph(graphMatrix) == graph)
       }
     }
     "be a int list of all nodes (0,1,2,3)" when {
@@ -111,31 +111,31 @@ class AdjacencyListDirectedGraphTest extends WordSpec {
 trait ContextDirected {
 
   val graph = AdjacencyListDirectedGraph(List(
-    NodeDirected.from(0, Set(1, 2)),
-    NodeDirected.from(1, Set(0, 3)),
-    NodeDirected.from(2, Set(1)),
-    NodeDirected.from(3, Set(0, 2))
+    NodeDirected(0, Set(1, 2)),
+    NodeDirected(1, Set(0, 3)),
+    NodeDirected(2, Set(1)),
+    NodeDirected(3, Set(0, 2))
   ))
 
   val graph2 = AdjacencyListDirectedGraph(List(
-    NodeDirected.from(0, Set(1, 2)),
-    NodeDirected.from(1, Set(0)),
-    NodeDirected.from(2, Set(1)),
-    NodeDirected.from(3, Set(0, 2))
+    NodeDirected(0, Set(1, 2)),
+    NodeDirected(1, Set(0)),
+    NodeDirected(2, Set(1)),
+    NodeDirected(3, Set(0, 2))
   ))
 
   val graphInverse = AdjacencyListDirectedGraph(List(
-    NodeDirected.from(0, Set(1, 3)),
-    NodeDirected.from(1, Set(0, 2)),
-    NodeDirected.from(2, Set(0, 3)),
-    NodeDirected.from(3, Set(1))
+    NodeDirected(0, Set(1, 3)),
+    NodeDirected(1, Set(0, 2)),
+    NodeDirected(2, Set(0, 3)),
+    NodeDirected(3, Set(1))
   ))
 
   val graphUndirected = AdjacencyListUndirectedGraph(List(
-    NodeUndirected.from(0, Set(1, 2, 3)),
-    NodeUndirected.from(1, Set(0, 2, 3)),
-    NodeUndirected.from(2, Set(0, 1, 3)),
-    NodeUndirected.from(3, Set(0, 1, 2))
+    NodeUndirected(0, Set(1, 2, 3)),
+    NodeUndirected(1, Set(0, 2, 3)),
+    NodeUndirected(2, Set(0, 1, 3)),
+    NodeUndirected(3, Set(0, 1, 2))
   ))
 
   val graphMatrix = List(

@@ -50,22 +50,22 @@ case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) exten
 
 object AdjacencyListUndirectedGraph {
 
+  implicit def apply(matrix: => List[List[Int]]): AdjacencyListUndirectedGraph[Int] = {
+    AdjacencyListUndirectedGraph(matrix.zipWithIndex.map({
+      case (neighbors, j) => NodeUndirected(j, neighbors.zipWithIndex.collect({
+        case (value, i) if value == 1 => (i, 1.0)
+      }).toSet)
+    }))
+  }
+
   implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListUndirectedGraph[T] = {
     AdjacencyListUndirectedGraph(adjacencyList.map({
-      case (id, neighbors) => NodeUndirected.from(id, neighbors)
+      case (id, neighbors) => NodeUndirected(id, neighbors)
     }).toList)
   }
 
   implicit def apply[T](adjacencyListDirected: AdjacencyListDirectedGraph[T]): AdjacencyListUndirectedGraph[T] = {
     adjacencyListDirected.toUndirectedGraph
   }
-
-  def fromMatrix(matrix: List[List[Int]]): AdjacencyListUndirectedGraph[Int] = {
-      AdjacencyListUndirectedGraph(matrix.zipWithIndex.map({
-        case (neighbors, j) => NodeUndirected(j, neighbors.zipWithIndex.collect({
-          case (value, i) if value == 1 => (i, 1.0)
-        }).toSet)
-      }))
-    }
 
 }

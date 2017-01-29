@@ -16,10 +16,10 @@ object Main extends App {
 
 
     val graph = AdjacencyListDirectedGraph(List(
-      NodeDirected.from(0, Set(1, 2)),
-      NodeDirected.from(1, Set(0, 3)),
-      NodeDirected.from(2, Set(1)),
-      NodeDirected.from(3, Set(0, 2))
+      NodeDirected(0, Set(1, 2)),
+      NodeDirected(1, Set(0, 3)),
+      NodeDirected(2, Set(1)),
+      NodeDirected(3, Set(0, 2))
     ))
 
     print(graph.nbNodes)

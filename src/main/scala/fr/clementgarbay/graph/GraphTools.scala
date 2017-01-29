@@ -41,7 +41,7 @@ object GraphTools {
     val edges: Set[(Int,Int)] = getRandomEdges(nbEdges, order)
 
     val nodes: List[NodeDirected[Int]] = (0 until order).map(nodeId => {
-      NodeDirected.from(nodeId, edges.filter(_._1 == nodeId).map(_._2))
+      NodeDirected(nodeId, edges.filter(_._1 == nodeId).map(_._2))
     }).toList
 
     AdjacencyListDirectedGraph(nodes)

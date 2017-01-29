@@ -24,7 +24,7 @@ object NodeDirected {
     * Helper to create NodeDirected without distance.
     * By default, the distance is 1.
     */
-  def from[T](id: T, successors: Set[T]): NodeDirected[T] =
+  implicit def apply[T](id: T, successors: => Set[T]): NodeDirected[T] =
     NodeDirected(id, successors.map(nodeId => (nodeId, 1.0)))
 
 }
@@ -48,7 +48,7 @@ object NodeUndirected {
     * Helper to create NodeDirected without distance.
     * By default, the distance is 1.
     */
-  def from[T](id: T, neighbors: Set[T]): NodeUndirected[T] =
+  implicit def apply[T](id: T, neighbors: => Set[T]): NodeUndirected[T] =
     NodeUndirected(id, neighbors.map(nodeId => (nodeId, 1.0)))
 
 }
