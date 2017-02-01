@@ -1,13 +1,11 @@
 package fr.clementgarbay.graph
 
-import scala.collection.immutable.ListMap
-
 /**
   * @author Clément Garbay
   *
   * @tparam T The type of the node id
   */
-trait IDirectedGraph[T] extends IGraph[T] {
+trait IDirectedGraph[T] extends IGraph[T, SemiArc[T]] {
 
   /**
     * A list of arcs with starting node, ending node and the distance between both
@@ -18,11 +16,6 @@ trait IDirectedGraph[T] extends IGraph[T] {
     * The number of arcs in the graph
     */
   val nbArcs: Int
-
-  /**
-    * The inverse graph
-    */
-  val inverse: IDirectedGraph[T]
 
   /**
     * The corresponding undirected graph from the directed graph
@@ -79,6 +72,20 @@ trait IDirectedGraph[T] extends IGraph[T] {
   def getDistance(from: T, to: T): Double
 
   /**
+    * Return successors or neighbors depending on the type of graph
+    */
+  override def getNextNodes(nodeId: T): Set[SemiArc[T]] = {
+    getSuccessors(nodeId)
+  }
+
+  /**
+    * Return ids of successors or neighbors depending on the type of graph
+    */
+  override def getNextNodesId(nodeId: T): Set[T] = {
+    getSuccessorsIds(nodeId)
+  }
+
+  /**
     * Get successors of a specific node
     *
     * @param nodeId The related node id
@@ -111,37 +118,6 @@ trait IDirectedGraph[T] extends IGraph[T] {
   def getPredecessorsIds(nodeId: T): Set[T]
 
   /**
-    * Explore a graph with the depth first search algorithm
-    *
-    * @param startingNodeId The starting node id
-    * @return               All nodes ids reachable from the starting node
-    */
-  def depthFirstSearch(startingNodeId: T): Set[T] = {
-    def depthFirstSearchRec(node: T, visited: Set[T]): Set[T] = {
-      if (visited contains node) visited
-      else getSuccessorsIds(node).foldLeft(visited + node)((visitedNodes, successor) => depthFirstSearchRec(successor, visitedNodes))
-    }
-
-    depthFirstSearchRec(startingNodeId, Set())
-  }
-
-  /**
-    * Explore a graph with the breadth first search algorithm
-    *
-    * @param startingNodeId The starting node id
-    * @return               All nodes ids reachable from the starting node
-    */
-  def breadthFirstSearch(startingNodeId: T): Set[T] = {
-    def breadthFirstSearchRec(toVisit: Set[T], visited: Set[T]): Set[T] = {
-      val successors = toVisit.flatMap(getSuccessorsIds).diff(visited)
-      if (successors.isEmpty) visited
-      else breadthFirstSearchRec(successors, visited ++ successors)
-    }
-
-    breadthFirstSearchRec(Set(startingNodeId), Set(startingNodeId))
-  }
-
-  /**
     * Compute shortest distances from a node to all other node in the graph.
     * Using Bellman-Ford algorithm.
     *
@@ -171,58 +147,4 @@ trait IDirectedGraph[T] extends IGraph[T] {
 
     (distances, paths)
   }
-
-  /**
-    * Get all strongly connected components from a node id
-    *
-    * @param startingNodeId The starting node id
-    * @return
-    */
-  def getStronglyConnectedComponents(startingNodeId: T): Set[Set[T]] = {
-    val sortedEnd = ListMap(depthFirstSearchWithInfo(startingNodeId)._2.toSeq.sortWith(_._2 > _._2):_*)
-    val scc = inverse.depthFirstSearchWithInfo(sortedEnd.head._1, sortedEnd.keys.toList)
-    scc._3
-  }
-
-  /**
-    * GO AWAY VERY UGLY METHOD
-    *
-    * TODO: refactor
-    *
-    * @param startingNodeId The starting node id
-    * @param listToFollow   A list of nodes ids to follow
-    * @return               (start, end, visited)
-    */
-  private def depthFirstSearchWithInfo(startingNodeId: T, listToFollow: List[T] = nodesIds): (Map[T, Int], Map[T, Int], Set[Set[T]]) = {
-    var increment: Int = 0
-    var start: Map[T, Int] = Map.empty
-    var end: Map[T, Int] = Map.empty
-
-    def depthFirstSearchRec(node: T, visited: Set[T]): Set[T] = {
-      increment += 1
-      start += node -> increment
-
-      val currentVisit = getSuccessorsIds(node)
-        .diff(visited + node)
-        .foldLeft(visited + node)((acc, successor) => acc ++ depthFirstSearchRec(successor, acc))
-
-      increment += 1
-      end += node -> increment
-
-      currentVisit
-    }
-
-    var visited: Set[Set[T]] = Set(depthFirstSearchRec(startingNodeId, Set.empty))
-
-    visited = listToFollow
-      .diff(visited.toList.flatten)
-      .filter(node => !(visited.flatten contains node))
-      .foldLeft(visited)((acc, node) => {
-        val res = depthFirstSearchRec(node, acc.flatten).diff(acc.flatten)
-        if (res.nonEmpty) acc + res else acc
-      })
-
-    (start, end, visited)
-  }
-
 }
