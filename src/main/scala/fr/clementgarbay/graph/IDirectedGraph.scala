@@ -1,6 +1,6 @@
 package fr.clementgarbay.graph
 
-import scala.collection.immutable.ListMap
+import scala.collection.immutable.{Iterable, ListMap, Seq}
 
 /**
   * @author Clément Garbay
@@ -142,34 +142,64 @@ trait IDirectedGraph[T] extends IGraph[T] {
   }
 
   /**
-    * Compute shortest distances from a node to all other node in the graph.
+    * Compute shortest distances from a node to all other nodes in the graph.
     * Using Bellman-Ford algorithm.
     *
-    * TODO: use a `Path` object to store parents ?
-    * TODO: add tests
-    *
     * @param startingNodeId The starting node id
-    * @return               (distances, parents)
+    * @return               The different paths computed to all other nodes
     */
-  def getShortestPathWithBellmanFord(startingNodeId: T): (Map[T, Double], List[Path[T]]) = {
-    var distances: Map[T, Double] = nodesIds.map(nodeId => nodeId -> Double.MaxValue).toMap
-    var parents: Map[T, Option[SemiArc[T]]] = nodesIds.map(nodeId => nodeId -> Option.empty).toMap
+  def getShortestPathWithBellmanFord(startingNodeId: T): List[Path[T]] = {
+    var candidatePaths: Map[T, Path[T]] = nodesIds.map(nodeId => nodeId -> Path(Double.MaxValue, List(startingNodeId))).toMap
 
-    distances = distances + (startingNodeId -> 0.0)
+    candidatePaths = candidatePaths + (startingNodeId -> Path(0.0, List(startingNodeId)))
 
     for {
       _ <- 1 until nbNodes - 1
-      arc <- arcs if arc.to != startingNodeId && distances(arc.to) > distances(arc.from) + arc.distance
+      arc <- arcs
+      if arc.to != startingNodeId && candidatePaths(arc.to).distance > candidatePaths(arc.from).distance + arc.distance
     } {
-      distances = distances + (arc.to -> (distances(arc.from) + arc.distance))
-      parents = parents + (arc.to -> Some(SemiArc(arc.from, getDistance(arc.from, arc.to))))
+      candidatePaths = candidatePaths + (arc.to -> candidatePaths(arc.from).addToTop(arc.distance, arc.to))
     }
 
-    val paths = nodesIds
-      .filter(_ != startingNodeId)
-      .map(nodeId => Path.getPathFromParents(startingNodeId, nodeId, parents))
+    candidatePaths
+      .filter(_._1 != startingNodeId)
+      .map(_._2.reverse).toList
+  }
 
-    (distances, paths)
+  /**
+    * Compute shortest path between two nodes in the graph.
+    * Using Dijkstra algorithm.
+    *
+    * @param startingNodeId The starting node id
+    * @param endingNodeId   The ending node id
+    * @return               The path with the smallest distance
+    */
+  def getShortestPathWithDijkstra(startingNodeId: T, endingNodeId: T): Path[T] = {
+    def getShortestPathWithDijkstraRec(candidatePaths: List[Path[T]], visited: Set[T]): Path[T] =
+      candidatePaths match {
+        case candidatePath :: candidatePaths_rest => candidatePath.path match {
+          case firstInPath :: _ =>
+            if (firstInPath == endingNodeId) candidatePath.reverse
+            else {
+              val newCandidatePaths = getSuccessors(firstInPath)
+                .toList
+                .collect {
+                  case (successor: SemiArc[T]) if !visited.contains(successor.to) =>
+                    candidatePath.addToTop(successor.distance, successor.to)
+                }
+
+              val newCandidatesSorted = (newCandidatePaths ++ candidatePaths_rest).sortWith {
+                case (path1, path2) => path1.distance < path2.distance
+              }
+
+              getShortestPathWithDijkstraRec(newCandidatesSorted, visited + firstInPath)
+            }
+          case _ => Path.empty
+        }
+        case _ => Path.empty
+      }
+
+    getShortestPathWithDijkstraRec(List(Path(0.0, List(startingNodeId))), Set())
   }
 
   /**
