@@ -17,15 +17,21 @@ class IDirectedGraphTest extends WordSpec {
     "right compute the shortest distances and parents from the node `3`" in new ContextDirectedGraph {
       assert(
         graphWithDistances.getShortestPathWithBellmanFord("3") ==
-        (
-          Map("0" -> 4.0, "1" -> 5.0, "2" -> 14.0, "3" -> 0.0, "4" -> 3.0),
-          List(
-            Path("3","0",List(Arc("3","0",4.0))),
-            Path("3","1",List(Arc("3","0",4.0), Arc("0","1",1.0))),
-            Path("3","2",List(Arc("3","0",4.0), Arc("0","2",10.0))),
-            Path("3","4",List(Arc("3","4",3.0)))
-          )
+        List(
+          Path(3.0, List("3", "4")),
+          Path(5.0, List("3", "0", "1")),
+          Path(4.0, List("3", "0")),
+          Path(14.0, List("3", "0", "2"))
         )
+      )
+    }
+  }
+
+  "The getShortestPathWithDijkstra method" should {
+    "right compute the shortest path from the node `a` to `e`" in new ContextDirectedGraph {
+      assert(
+        graphWithDistances2.getShortestPathWithDijkstra("a", "e") ==
+        Path(26.0, List("a", "c", "d", "e"))
       )
     }
   }
@@ -34,7 +40,7 @@ class IDirectedGraphTest extends WordSpec {
 
 trait ContextDirectedGraph {
 
-  val graph = AdjacencyListDirectedGraph(List(
+  val graph: AdjacencyListDirectedGraph[Int] = AdjacencyListDirectedGraph(List(
     NodeDirected(1, Set(4)),
     NodeDirected(2, Set(1, 5, 7)),
     NodeDirected(3, Set(2)),
@@ -49,12 +55,23 @@ trait ContextDirectedGraph {
     NodeDirected(12, Set(8, 11))
   ))
 
-  val graphWithDistances = AdjacencyListDirectedGraph(List(
-    NodeDirected("0", Set(SemiArc("1", 1.0), SemiArc("2", 10.0))),
-    NodeDirected("1", Set(SemiArc("3", 3.0))),
-    NodeDirected("2", Set(SemiArc("3", -10.0))),
-    NodeDirected("3", Set(SemiArc("0", 4.0), SemiArc("4", 3.0))),
-    NodeDirected("4", Set.empty[SemiArc[String]])
-  ))
+  val graphWithDistances: AdjacencyListDirectedGraph[String] =
+    AdjacencyListDirectedGraph.fromMapWithDistances(Map(
+      "0" -> Set(("1", 1.0), ("2", 10.0)),
+      "1" -> Set(("3", 3.0)),
+      "2" -> Set(("3", -10.0)),
+      "3" -> Set(("0", 4.0), ("4", 3.0)),
+      "4" -> Set.empty[(String, Double)]
+    ))
+
+  var graphWithDistances2: AdjacencyListDirectedGraph[String] =
+    AdjacencyListDirectedGraph.fromMapWithDistances(Map(
+      "a" -> Set(("b", 7.0), ("c", 9.0), ("f", 14.0)),
+      "b" -> Set(("c", 10.0), ("d", 15.0)),
+      "c" -> Set(("d", 11.0), ("f", 2.0)),
+      "d" -> Set(("e", 6.0)),
+      "e" -> Set(("f", 9.0)),
+      "f" -> Set.empty[(String, Double)]
+    ))
 
 }
