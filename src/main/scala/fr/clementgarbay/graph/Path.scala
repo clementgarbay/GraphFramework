@@ -3,22 +3,24 @@ package fr.clementgarbay.graph
 /**
   * @author Clément Garbay
   */
-case class Path[T](from: T, to: T, path: List[Link[T]]) {
+case class Path[T](distance: Double, path: List[T]) {
 
-  val distance: Double = path.map(_.distance).sum
+  lazy val from: T = path.head
+  lazy val to: T = path.last
+  lazy val reverse: Path[T] = Path(distance, path.reverse)
+
+  def addToTop(dist: Double, elem: T): Path[T] = {
+    Path(distance + dist, elem :: path)
+  }
+
+  def addToEnd(dist: Double, elem: T): Path[T] = {
+    Path(distance + dist, path :+ elem)
+  }
 
 }
 
 object Path {
 
-  def getPathFromParents[T](startingNodeId: T, endingNodeId: T, parents: Map[T, Option[SemiLinkTransformable[T]]]): Path[T] = {
-    def getPathFromParentsRec(nodeId: T, path: List[Link[T]]): List[Link[T]] = {
-      val parentOpt = parents(nodeId)
-      if (parentOpt.isEmpty || parentOpt == startingNodeId) path
-      else getPathFromParentsRec(parentOpt.get.to, path :+ parentOpt.get.toLink(nodeId).reverse)
-    }
-
-    Path(startingNodeId, endingNodeId, getPathFromParentsRec(endingNodeId, List.empty).reverse)
-  }
+  def empty[T] = Path(0.0, List.empty[T])
 
 }

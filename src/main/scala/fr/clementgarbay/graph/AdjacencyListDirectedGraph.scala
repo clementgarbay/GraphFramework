@@ -71,15 +71,23 @@ case class AdjacencyListDirectedGraph[T](nodes: List[NodeDirected[T]]) extends I
 object AdjacencyListDirectedGraph {
 
   implicit def apply(matrix: => List[List[Int]]): AdjacencyListDirectedGraph[Int] =
-    AdjacencyListDirectedGraph(matrix.zipWithIndex.collect({
-      case (successors, j) => NodeDirected(j, successors.zipWithIndex.collect({
+    AdjacencyListDirectedGraph(matrix.zipWithIndex.collect {
+      case (successors, j) => NodeDirected(j, successors.zipWithIndex.collect {
         case (value, i) if value == 1 => SemiArc(i)
-      }).toSet)
-    }))
+      }.toSet)
+    })
 
   implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListDirectedGraph[T] =
-    AdjacencyListDirectedGraph(adjacencyList.map({
+    AdjacencyListDirectedGraph(adjacencyList.map {
       case (id, successors) => NodeDirected(id, successors)
-    }).toList)
+    }.toList)
+
+
+  def fromMapWithDistances[T](adjacencyList: => Map[T, Set[(T, Double)]]): AdjacencyListDirectedGraph[T] =
+    AdjacencyListDirectedGraph(adjacencyList.map {
+      case (id, successors) => NodeDirected(id, successors.map {
+        case (successor, distance) => SemiArc(successor, distance)
+      })
+    }.toList)
 
 }

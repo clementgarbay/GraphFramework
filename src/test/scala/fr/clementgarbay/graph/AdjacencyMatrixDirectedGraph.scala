@@ -138,10 +138,10 @@ trait ContextMatrixDirected {
   )
 
   val adjacencyList = Map(
-    (0, Set(1, 2)),
-    (1, Set(3)),
-    (2, Set(1)),
-    (3, Set(0, 2))
+    0 -> Set(1, 2),
+    1 -> Set(3),
+    2 -> Set(1),
+    3 -> Set(0, 2)
   )
 
   val adjacencyListDirectedGraph: AdjacencyListDirectedGraph[Int] = AdjacencyListDirectedGraph(adjacencyList)
