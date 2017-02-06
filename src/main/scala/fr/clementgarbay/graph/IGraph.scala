@@ -101,9 +101,8 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
 
     def primRec(visited: Set[T], currentBinaryHeap: BinaryHeap[Link[T]], currentHeap: Set[Link[T]] = Set.empty): Set[Link[T]] = {
       filterRoot(visited, currentBinaryHeap).root match {
-        case Some(minimalLink: Link[T]) => {
+        case Some(minimalLink: Link[T]) =>
           primRec(visited + minimalLink.to, addNodesInHeap(minimalLink.to, currentBinaryHeap), currentHeap + minimalLink)
-        }
         case None => currentHeap
       }
     }

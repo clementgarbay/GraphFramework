@@ -72,4 +72,11 @@ object AdjacencyListUndirectedGraph {
     adjacencyListDirected.toUndirectedGraph
   }
 
+  def fromMapWithDistances[T](adjacencyList: => Map[T, Set[(T, Double)]]): AdjacencyListUndirectedGraph[T] =
+    AdjacencyListUndirectedGraph(adjacencyList.map {
+      case (id, successors) => NodeUndirected(id, successors.map {
+        case (successor, distance) => SemiEdge(successor, distance)
+      })
+    }.toList)
+
 }

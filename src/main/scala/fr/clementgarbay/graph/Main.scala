@@ -25,6 +25,17 @@ object Main extends App {
     val binaryHeapArcs = BinaryHeap[Link[Int]](List(link, link2, link3, link4, link5, link6))
     println(binaryHeapArcs)
     println(binaryHeapArcs.add(Arc(5, 6, 1.0)))
+
+    val graph = AdjacencyListDirectedGraph.fromMapWithDistances(Map(
+      "B" -> Set(("A", 5.0), ("C", 4.0), ("D", 11.0)),
+      "A" -> Set(("B", 5.0), ("C", 10.0)),
+      "C" -> Set(("B", 4.0), ("A", 10.0), ("D", 5.0)),
+      "D" -> Set(("B", 11.0), ("C", 5.0))
+    ))
+
+    val result = graph.prim("A")
+
+    println("plop")
 //    val graph1 = GraphTools.generateUndirectedGraph(10,10)
 
 
