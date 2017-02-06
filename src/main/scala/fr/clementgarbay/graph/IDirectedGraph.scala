@@ -120,22 +120,40 @@ trait IDirectedGraph[T] extends IGraph[T, SemiArc[T]] {
     * @param startingNodeId The starting node id
     * @return               The different paths computed to all other nodes
     */
-  def getShortestPathWithBellmanFord(startingNodeId: T): List[Path[T]] = {
-    var candidatePaths: Map[T, Path[T]] = nodesIds.map(nodeId => nodeId -> Path(Double.MaxValue, List(startingNodeId))).toMap
+//  def getShortestPathWithBellmanFord(startingNodeId: T): List[Path[T]] = {
+//    var candidatePaths: Map[T, Path[T]] = nodesIds.map(nodeId => nodeId -> Path(Double.MaxValue, List(startingNodeId))).toMap
+//
+//    candidatePaths = candidatePaths + (startingNodeId -> Path(0.0, List(startingNodeId)))
+//
+//    for {
+//      _ <- 1 until nbNodes - 1
+//      arc <- arcs
+//      if arc.to != startingNodeId && candidatePaths(arc.to).distance > candidatePaths(arc.from).distance + arc.distance
+//    } {
+//      candidatePaths = candidatePaths + (arc.to -> candidatePaths(arc.from).addToTop(arc.distance, arc.to))
+//    }
+//
+//    candidatePaths
+//      .filter(_._1 != startingNodeId)
+//      .map(_._2.reverse).toList
+//  }
 
-    candidatePaths = candidatePaths + (startingNodeId -> Path(0.0, List(startingNodeId)))
+  def getShortestPathWithBellmanFord(startingNodeId: T): (Map[T, Double], Map[T, Option[T]]) = {
+    var distances: Map[T, Double] = nodesIds.map(nodeId => nodeId -> Double.MaxValue).toMap
+    var parents: Map[T, Option[T]] = nodesIds.map(nodeId => nodeId -> Option.empty).toMap
+
+    distances = distances + (startingNodeId -> 0.0)
 
     for {
       _ <- 1 until nbNodes - 1
       arc <- arcs
-      if arc.to != startingNodeId && candidatePaths(arc.to).distance > candidatePaths(arc.from).distance + arc.distance
+      if arc.to != startingNodeId && distances(arc.to) > distances(arc.from) + arc.distance
     } {
-      candidatePaths = candidatePaths + (arc.to -> candidatePaths(arc.from).addToTop(arc.distance, arc.to))
+      distances = distances + (arc.to -> (distances(arc.from) + arc.distance))
+      parents = parents + (arc.to -> Some(arc.from))
     }
 
-    candidatePaths
-      .filter(_._1 != startingNodeId)
-      .map(_._2.reverse).toList
+    (distances, parents)
   }
 
   /**
