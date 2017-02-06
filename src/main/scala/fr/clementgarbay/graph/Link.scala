@@ -11,9 +11,15 @@ trait SemiLink[T] {
   val distance: Double
 }
 
-trait Link[T] extends SemiLink[T] {
+trait Link[T] extends SemiLink[T] with Ordered[Link[T]] {
   val from: T
   val reverse: Link[T]
+
+  override def compare(that: Link[T]): Int = distance.compare(that.distance)
+}
+
+object Link {
+  implicit def linkOrdering[T]: Ordering[Link[T]] = Ordering.fromLessThan(_.distance < _.distance)
 }
 
 trait SemiLinkTransformable[T] extends SemiLink[T] {
