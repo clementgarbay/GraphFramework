@@ -35,6 +35,8 @@ case class AdjacencyListDirectedGraph[T](nodes: List[NodeDirected[T]]) extends I
         .map(nodeDirected => SemiEdge(nodeDirected.id, nodeDirected.distanceWith(node.id).get)))
     }))
 
+  override def getNodes: List[T] = nodes.map(_.id)
+
   override def isArc(from: T, to: T): Boolean = nodes.exists(node => node.id == from && node.successorsIds.contains(to))
 
   override def addArc(from: T, to: T, distance: Double): IDirectedGraph[T] =

@@ -34,6 +34,11 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
   val inverse: IGraph[T, U]
 
   /**
+    * Return the nodes of the graph
+    */
+  def getNodes: List[T]
+
+  /**
     * Return successors or neighbors depending on the type of graph
     */
   def getNextNodes(nodeId: T): Set[U]

@@ -24,6 +24,8 @@ case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) exten
       }.toList
     }.toList
 
+  override def getNodes: List[T] = nodes.map(_.id)
+
   override def isEdge(from: T, to: T): Boolean = nodes.exists(node => node.id == from && node.neighborsIds.contains(to))
 
   override def addEdge(from: T, to: T, distance: Double): IUndirectedGraph[T] =
