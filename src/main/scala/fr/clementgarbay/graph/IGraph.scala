@@ -4,6 +4,7 @@ import scala.collection.immutable.ListMap
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   *
   * @tparam T The type of the node id
   * @tparam U SemiEdge or SemiArc
@@ -101,9 +102,8 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
 
     def primRec(visited: Set[T], currentBinaryHeap: BinaryHeap[Link[T]], currentHeap: Set[Link[T]] = Set.empty): Set[Link[T]] = {
       filterRoot(visited, currentBinaryHeap).root match {
-        case Some(minimalLink: Link[T]) => {
+        case Some(minimalLink: Link[T]) =>
           primRec(visited + minimalLink.to, addNodesInHeap(minimalLink.to, currentBinaryHeap), currentHeap + minimalLink)
-        }
         case None => currentHeap
       }
     }

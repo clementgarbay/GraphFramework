@@ -4,6 +4,7 @@ import scala.util.Random
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   */
 object GraphTools {
 

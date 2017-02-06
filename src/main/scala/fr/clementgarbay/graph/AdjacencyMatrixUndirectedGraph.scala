@@ -2,8 +2,9 @@ package fr.clementgarbay.graph
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   *
-  * TODO: implement with distances
+  * TODO: with distances and Generic one -> Map of map maybe
   */
 case class AdjacencyMatrixUndirectedGraph(matrix: List[List[Int]]) extends IUndirectedGraph[Int] {
 

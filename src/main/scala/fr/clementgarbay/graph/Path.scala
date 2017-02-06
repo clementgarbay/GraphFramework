@@ -2,6 +2,7 @@ package fr.clementgarbay.graph
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   */
 case class Path[T](distance: Double, path: List[T]) {
 

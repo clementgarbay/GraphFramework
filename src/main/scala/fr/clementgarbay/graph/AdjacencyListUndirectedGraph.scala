@@ -2,6 +2,7 @@ package fr.clementgarbay.graph
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   */
 case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) extends IUndirectedGraph[T] {
 
@@ -71,5 +72,12 @@ object AdjacencyListUndirectedGraph {
   implicit def apply[T](adjacencyListDirected: AdjacencyListDirectedGraph[T]): AdjacencyListUndirectedGraph[T] = {
     adjacencyListDirected.toUndirectedGraph
   }
+
+  def fromMapWithDistances[T](adjacencyList: => Map[T, Set[(T, Double)]]): AdjacencyListUndirectedGraph[T] =
+    AdjacencyListUndirectedGraph(adjacencyList.map {
+      case (id, successors) => NodeUndirected(id, successors.map {
+        case (successor, distance) => SemiEdge(successor, distance)
+      })
+    }.toList)
 
 }
