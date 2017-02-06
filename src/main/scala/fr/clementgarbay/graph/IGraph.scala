@@ -35,6 +35,10 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
     */
   def getNextNodes(nodeId: T): Set[U]
 
+  def getNextLinks(nodeId: T): Set[Link[T]] = {
+    getNextNodes(nodeId).map(e => e.toLink(nodeId))
+  }
+
   /**
     * Return ids of successors or neighbors depending on the type of graph
     */
@@ -81,6 +85,30 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
     val sortedEnd = ListMap(depthFirstSearchWithInfo(startingNodeId)._2.toSeq.sortWith(_._2 > _._2):_*)
     val scc = inverse.depthFirstSearchWithInfo(sortedEnd.head._1, sortedEnd.keys.toList)
     scc._3
+  }
+
+  def prim(startingNodeId: T): Set[Link[T]] = {
+    def addNodesInHeap(node: T, currentHeap: BinaryHeap[Link[T]]): BinaryHeap[Link[T]] = {
+      getNextLinks(node).foldLeft(currentHeap){(acc: BinaryHeap[Link[T]], i: Link[T]) => acc.add(i)}
+    }
+
+    def filterRoot(toRemove: Set[T], heap: BinaryHeap[Link[T]]): BinaryHeap[Link[T]] = {
+      Stream.iterate(heap)(_.removeRoot()).dropWhile(e => e.root match {
+        case Some(link: Link[T]) => toRemove.contains(link.to)
+        case None => false
+      }).head
+    }
+
+    def primRec(visited: Set[T], currentBinaryHeap: BinaryHeap[Link[T]], currentHeap: Set[Link[T]] = Set.empty): Set[Link[T]] = {
+      filterRoot(visited, currentBinaryHeap).root match {
+        case Some(minimalLink: Link[T]) => {
+          primRec(visited + minimalLink.to, addNodesInHeap(minimalLink.to, currentBinaryHeap), currentHeap + minimalLink)
+        }
+        case None => currentHeap
+      }
+    }
+
+    primRec(Set(startingNodeId), addNodesInHeap(startingNodeId, BinaryHeap[Link[T]](List.empty)))
   }
 
   /**
