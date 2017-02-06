@@ -4,6 +4,7 @@ import scala.collection.immutable.ListMap
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   *
   * @tparam T The type of the node id
   * @tparam U SemiEdge or SemiArc

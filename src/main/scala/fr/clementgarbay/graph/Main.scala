@@ -3,6 +3,7 @@ package fr.clementgarbay.graph
 import fr.clementgarbay.graph.Link._
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   */
 object Main extends App {
 

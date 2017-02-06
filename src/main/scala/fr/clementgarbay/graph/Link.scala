@@ -2,6 +2,7 @@ package fr.clementgarbay.graph
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   *
   * @note By default, the distance is 1.
   */

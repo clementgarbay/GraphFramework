@@ -2,6 +2,7 @@ package fr.clementgarbay.graph
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   */
 case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) extends IUndirectedGraph[T] {
 

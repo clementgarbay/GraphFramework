@@ -2,6 +2,7 @@ package fr.clementgarbay
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   */
 package object graph {
 

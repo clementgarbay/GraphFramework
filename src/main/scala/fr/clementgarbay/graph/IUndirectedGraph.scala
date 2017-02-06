@@ -2,6 +2,7 @@ package fr.clementgarbay.graph
 
 /**
   * @author Clément Garbay
+  * @author Anaël Chardan
   */
 trait IUndirectedGraph[T] extends IGraph[T, SemiEdge[T]] {
 
