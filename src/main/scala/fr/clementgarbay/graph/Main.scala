@@ -1,6 +1,8 @@
 package fr.clementgarbay.graph
 
 import fr.clementgarbay.graph.Link._
+import fr.clementgarbay.graph.adjacency_list.AdjacencyListDirectedGraph
+import fr.clementgarbay.graph.heap.BinaryHeap
 /**
   * @author Clément Garbay
   * @author Anaël Chardan

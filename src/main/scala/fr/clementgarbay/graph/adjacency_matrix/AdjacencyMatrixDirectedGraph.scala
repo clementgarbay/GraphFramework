@@ -1,4 +1,5 @@
 package fr.clementgarbay.graph
+package adjacency_matrix
 
 /**
   * @author Clément Garbay

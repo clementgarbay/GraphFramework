@@ -1,4 +1,5 @@
 package fr.clementgarbay.graph
+package adjacency_list
 
 /**
   * @author Clément Garbay
@@ -79,5 +80,4 @@ object AdjacencyListUndirectedGraph {
         case (successor, distance) => SemiEdge(successor, distance)
       })
     }.toList)
-
 }

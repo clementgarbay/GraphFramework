@@ -1,5 +1,7 @@
 package fr.clementgarbay.graph
 
+import fr.clementgarbay.graph.heap.BinaryHeap
+
 import scala.collection.immutable.ListMap
 
 /**

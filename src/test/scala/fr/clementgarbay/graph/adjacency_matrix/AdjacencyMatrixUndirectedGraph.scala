@@ -1,5 +1,6 @@
-package fr.clementgarbay.graph
+package fr.clementgarbay.graph.adjacency_matrix
 
+import fr.clementgarbay.graph.adjacency_list.{AdjacencyListUndirectedGraph, ContextUndirected}
 import org.scalatest._
 
 /**

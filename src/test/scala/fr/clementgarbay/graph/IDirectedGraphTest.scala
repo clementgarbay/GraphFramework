@@ -1,5 +1,6 @@
 package fr.clementgarbay.graph
 
+import fr.clementgarbay.graph.adjacency_list.AdjacencyListDirectedGraph
 import org.scalatest.WordSpec
 
 /**

@@ -1,5 +1,6 @@
-package fr.clementgarbay.graph
+package fr.clementgarbay.graph.adjacency_list
 
+import fr.clementgarbay.graph.NodeUndirected
 import org.scalatest._
 
 /**

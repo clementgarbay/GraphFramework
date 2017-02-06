@@ -17,6 +17,8 @@ trait Link[T] extends SemiLink[T] with Ordered[Link[T]] {
   val reverse: Link[T]
 
   override def compare(that: Link[T]): Int = distance.compare(that.distance)
+
+  def toNode: NodeDirected[T] = NodeDirected(from, Set((to, distance)))
 }
 
 object Link {

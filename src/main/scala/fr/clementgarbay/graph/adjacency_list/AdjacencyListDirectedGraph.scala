@@ -1,9 +1,9 @@
 package fr.clementgarbay.graph
+package adjacency_list
 
 /**
   * @author Clément Garbay
   * @author Anaël Chardan
-  *
   * @tparam T The type of the node id
   */
 case class AdjacencyListDirectedGraph[T](nodes: List[NodeDirected[T]]) extends IDirectedGraph[T] {

@@ -21,7 +21,9 @@ case class Path[T](distance: Double, path: List[T]) {
 }
 
 object Path {
-
   def empty[T] = Path(0.0, List.empty[T])
 
+  def toArcs[T](path: Path[T]): List[Arc[T]] = {
+    path.path.zip(path.path.tail).map(e => Arc(e._1, e._2))
+  }
 }

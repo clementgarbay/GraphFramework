@@ -1,4 +1,5 @@
 package fr.clementgarbay.graph
+package heap
 
 /**
   * @author Clément Garbay
