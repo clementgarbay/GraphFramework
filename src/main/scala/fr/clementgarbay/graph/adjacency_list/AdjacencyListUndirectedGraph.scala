@@ -15,14 +15,10 @@ case class AdjacencyListUndirectedGraph[T](nodes: List[NodeUndirected[T]]) exten
   override lazy val nbEdges: Int = nodes.map(_.neighbors.size).sum / 2
   override lazy val nodesIds: List[T] = nodes.map(_.id)
 
-  override lazy val toAdjacencyMatrix: List[List[Int]] =
-    nodes.indices.map { i =>
-      nodes.indices.map { j =>
-        val nodeI = nodes(i)
-        val nodeJ = nodes(j)
-        (isEdge(nodeI.id, nodeJ.id) || isEdge(nodeJ.id, nodeI.id)).toInt
-      }.toList
-    }.toList
+  override lazy val toAdjacencyMatrix: Map[T, Map[T, Int]] =
+    nodes.map(from =>
+      from.id -> nodes.map(to => to.id -> (isEdge(from.id, to.id) || isEdge(to.id, from.id)).toInt).toMap
+    ).toMap
 
   override def getNodes: List[T] = nodes.map(_.id)
 
@@ -64,6 +60,14 @@ object AdjacencyListUndirectedGraph {
         case (value, i) if value == 1 => SemiEdge(i)
       }).toSet)
     }))
+  }
+
+  def fromMatrix[T](matrix: => Map[T, Map[T, Int]]): AdjacencyListUndirectedGraph[T] = {
+    AdjacencyListUndirectedGraph(matrix.map({
+      case (j, neighbors) => NodeUndirected(j, neighbors.collect({
+        case (i, value) if value == 1 => SemiEdge(i)
+      }).toSet)
+    }).toList)
   }
 
   implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListUndirectedGraph[T] = {

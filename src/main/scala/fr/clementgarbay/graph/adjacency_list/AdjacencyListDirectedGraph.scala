@@ -14,14 +14,10 @@ case class AdjacencyListDirectedGraph[T](nodes: List[NodeDirected[T]]) extends I
   override lazy val nbArcs: Int = nodes.map(_.successors.size).sum // arcs.size
   override lazy val nodesIds: List[T] = nodes.map(_.id)
 
-  override lazy val toAdjacencyMatrix: List[List[Int]] =
-    nodes.indices.map { i =>
-      nodes.indices.map { j =>
-        val nodeI = nodes(i)
-        val nodeJ = nodes(j)
-        isArc(nodeI.id, nodeJ.id).toInt
-      }.toList
-    }.toList
+  override lazy val toAdjacencyMatrix: Map[T, Map[T, Int]] =
+    nodes.map(from =>
+      from.id -> nodes.map(to => to.id -> isArc(from.id, to.id).toInt).toMap
+    ).toMap
 
   override lazy val inverse: IDirectedGraph[T] =
     AdjacencyListDirectedGraph(
@@ -79,6 +75,14 @@ object AdjacencyListDirectedGraph {
         case (value, i) if value == 1 => SemiArc(i)
       }.toSet)
     })
+
+  def fromMatrix[T](matrix: => Map[T, Map[T, Int]]): AdjacencyListDirectedGraph[T] = {
+    AdjacencyListDirectedGraph(matrix.map({
+      case (j, successors) => NodeDirected(j, successors.collect({
+        case (i, value) if value == 1 => SemiArc(i)
+      }).toSet)
+    }).toList)
+  }
 
   implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListDirectedGraph[T] =
     AdjacencyListDirectedGraph(adjacencyList.map {

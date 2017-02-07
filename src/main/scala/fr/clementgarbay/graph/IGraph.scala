@@ -21,7 +21,7 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
   /**
     * The associated adjacency matrix representation of the graph
     */
-  val toAdjacencyMatrix: List[List[Int]]
+  val toAdjacencyMatrix: Map[T, Map[T, Int]]
 
   /**
     * Return the list of existing nodes ids in the graph
@@ -43,6 +43,9 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
     */
   def getNextNodes(nodeId: T): Set[U]
 
+  /**
+    * Return Links from a node
+    */
   def getNextLinks(nodeId: T): Set[Link[T]] = {
     getNextNodes(nodeId).map(e => e.toLink(nodeId))
   }
@@ -95,6 +98,12 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
     scc._3
   }
 
+  /**
+    * Get the Minimum Spanning Tree using Prim algorithm
+    *
+    * @param startingNodeId the starting node id
+    * @return
+    */
   def prim(startingNodeId: T): Set[Link[T]] = {
     def addNodesInHeap(node: T, currentHeap: BinaryHeap[Link[T]]): BinaryHeap[Link[T]] = {
       getNextLinks(node).foldLeft(currentHeap){(acc: BinaryHeap[Link[T]], i: Link[T]) => acc.add(i)}

@@ -75,11 +75,11 @@ class AdjacencyMatrixUndirectedGraphTest extends WordSpec {
 
 trait ContextMatrixUndirected {
 
-  val graphMatrix = List(
-    List(0, 1, 1, 0),
-    List(1, 0, 1, 1),
-    List(1, 1, 0, 0),
-    List(0, 1, 0, 0)
+  val graphMatrix: Map[Int, Map[Int, Int]] = Map(
+    0 -> Map(0 -> 0, 1 -> 1, 2 -> 1, 3 -> 0),
+    1 -> Map(0 -> 1, 1 -> 0, 2 -> 1, 3 -> 1),
+    2 -> Map(0 -> 1, 1 -> 1, 2 -> 0, 3 -> 0),
+    3 -> Map(0 -> 0, 1 -> 1, 2 -> 0, 3 -> 0)
   )
 
   val adjacencyList = Map(
@@ -92,6 +92,6 @@ trait ContextMatrixUndirected {
   val graph = AdjacencyMatrixUndirectedGraph(graphMatrix)
 
   val adjacencyListUndirectedGraph: AdjacencyListUndirectedGraph[Int] = AdjacencyListUndirectedGraph(adjacencyList)
-  var adjacencyMatrix: AdjacencyMatrixUndirectedGraph = AdjacencyMatrixUndirectedGraph(adjacencyListUndirectedGraph)
+  var adjacencyMatrix: AdjacencyMatrixUndirectedGraph[Int] = AdjacencyMatrixUndirectedGraph(adjacencyListUndirectedGraph)
 
 }

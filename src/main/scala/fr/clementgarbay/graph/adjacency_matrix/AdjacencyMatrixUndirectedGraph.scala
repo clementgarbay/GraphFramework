@@ -5,7 +5,7 @@ package adjacency_matrix
   * @author Clément Garbay
   * @author Anaël Chardan
   *
-  * TODO: with distances and Generic one -> Map of map maybe
+  * TODO: with distances
   */
 case class AdjacencyMatrixUndirectedGraph[T](matrix: Map[T, Map[T, Int]]) extends IUndirectedGraph[T] {
 
@@ -43,8 +43,8 @@ case class AdjacencyMatrixUndirectedGraph[T](matrix: Map[T, Map[T, Int]]) extend
 
   private def update(from: T, to: T, value: Int): IUndirectedGraph[T] =
     AdjacencyMatrixUndirectedGraph(matrix.map {
-      case (index: T, neighbors) if index == from && neighbors.contains(to) => (index, neighbors.updated(to, value))
-      case (index: T, neighbors) if index == to && neighbors.contains(from) => (index, neighbors.updated(from, value))
+      case (index, neighbors) if index == from && neighbors.contains(to) => (index, neighbors.updated(to, value))
+      case (index, neighbors) if index == to && neighbors.contains(from) => (index, neighbors.updated(from, value))
       case (index, neighbors) => (index, neighbors)
     })
 }
@@ -56,11 +56,7 @@ object AdjacencyMatrixUndirectedGraph {
       graph.getNodes.map(from => from -> graph.getNodes.map(to => (to, graph.isEdge(from, to).toInt)).toMap).toMap
     )
 
-//  implicit def apply(matrix: List[List[Int]]): AdjacencyMatrixUndirectedGraph[Int] = {
-//    matrix.zipWithIndex.map {
-//      case (otherNodes, from) => otherNodes.zipWithIndex.map {
-//        case (isArc, to) =>
-//      }
-//    }
-//  }
+  implicit def apply(matrix: List[List[Int]]): AdjacencyMatrixUndirectedGraph[Int] = {
+    AdjacencyMatrixUndirectedGraph(matrix.zipWithIndex.map(_.swap).toMap.mapValues(_.zipWithIndex.map(_.swap).toMap))
+  }
 }
