@@ -38,6 +38,8 @@ trait IUndirectedGraph[T] extends IGraph[T, SemiEdge[T]] {
     isConnected && (oddDegresNodes == 0)
   }
 
+  override def getLinks: List[Edge[T]] = edges
+
   /**
     * Tests if two nodes are a edge
     *
