@@ -49,6 +49,13 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
   val isEulerian: Boolean
 
   /**
+    * Give the distance of a graph
+    */
+  lazy val diameter: Double = {
+    nodesIds.map(getShortestPathWithBellmanFord).map(_.maxBy(_.distance)).maxBy(_.distance).distance
+  }
+
+  /**
     * Return the nodes of the graph
     */
   def getNodes: List[T]

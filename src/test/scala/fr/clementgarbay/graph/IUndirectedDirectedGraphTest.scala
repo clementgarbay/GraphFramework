@@ -19,6 +19,12 @@ class IUndirectedGraphTest extends WordSpec {
       assert(graph2.prim(0) == grap2PrimResult)
     }
   }
+
+  "The diameter" should {
+    "Return the right number for the cow grah" in new ContextUndirectedGraph {
+      assert(graphForDiameter.diameter == 3.0)
+    }
+  }
 }
 
 trait ContextUndirectedGraph {
@@ -52,4 +58,12 @@ trait ContextUndirectedGraph {
     Edge(2, 3, 7.0),
     Edge(3, 4, 9.0)
   )
+
+  val graphForDiameter: AdjacencyListUndirectedGraph[Int] = AdjacencyListUndirectedGraph(Map(
+    0 -> Set(1),
+    1 -> Set(0, 2, 3),
+    2 -> Set(1, 3),
+    3 -> Set(1, 2, 4),
+    4 -> Set(3)
+  ))
 }
