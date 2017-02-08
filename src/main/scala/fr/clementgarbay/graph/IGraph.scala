@@ -34,6 +34,21 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
   val inverse: IGraph[T, U]
 
   /**
+    * Check if the graph is connected
+    */
+  val isConnected: Boolean
+
+  /**
+    * Check if the graph is drawable with one trait
+    */
+  val admitEulerianChainOrPath: Boolean
+
+  /**
+    * Check if the graph is eulerian
+    */
+  val isEulerian: Boolean
+
+  /**
     * Return the nodes of the graph
     */
   def getNodes: List[T]

@@ -24,9 +24,26 @@ trait IDirectedGraph[T] extends IGraph[T, SemiArc[T]] {
   val toUndirectedGraph: IUndirectedGraph[T]
 
   /**
+    * Check the connectivity of a graph
+    */
+  override lazy val isConnected: Boolean = toUndirectedGraph.isConnected
+
+  /**
+    * In directed graph it's a path
+    */
+  override lazy val admitEulerianChainOrPath: Boolean =
+    isConnected && getNodes.map(e => (getSuccessorsIds(e), getPredecessorsIds(e))).filterNot(e => e._1.size == e._2.size).size <= 2
+
+  /**
+    * Is eulerian means that it contains an eulerian circuit
+    */
+  override lazy val isEulerian: Boolean =
+    isConnected && getNodes.map(e => (getSuccessorsIds(e), getPredecessorsIds(e))).forall(e => e._1.size == e._2.size)
+
+  /**
     * Check the strong connectivity of the graph
     */
-  lazy val isConnected: Boolean =
+  lazy val isStrongConnected: Boolean =
     if (nodesIds.isEmpty) false
     else depthFirstSearch(nodesIds.head).size == nbNodes && inverse.depthFirstSearch(nodesIds.head).size == nbNodes
 

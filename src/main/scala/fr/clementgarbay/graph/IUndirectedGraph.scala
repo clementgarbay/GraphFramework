@@ -18,12 +18,25 @@ trait IUndirectedGraph[T] extends IGraph[T, SemiEdge[T]] {
 
   override lazy val inverse: IGraph[T, SemiEdge[T]] = this
 
-  /**
-    * Check the connectivity of the graph
-    */
-  val isConnected: Boolean =
+  override lazy val isConnected: Boolean =
     if (nodesIds.isEmpty) false
     else depthFirstSearch(nodesIds.head).size == nbNodes
+
+  /**
+    * On undirected graph it's a chain
+    */
+  override lazy val admitEulerianChainOrPath: Boolean = {
+    lazy val oddDegresNodes = getNodes.map(getNeighborsIds).count(_.size % 2 == 0)
+    isConnected && (oddDegresNodes == 0 || oddDegresNodes == 2)
+  }
+
+  /**
+    * Is eulerian means that it contains an eulerian cycle
+    */
+  override val isEulerian: Boolean = {
+    lazy val oddDegresNodes = getNodes.map(getNeighborsIds).count(_.size % 2 == 0)
+    isConnected && (oddDegresNodes == 0)
+  }
 
   /**
     * Tests if two nodes are a edge
@@ -33,6 +46,7 @@ trait IUndirectedGraph[T] extends IGraph[T, SemiEdge[T]] {
     * @return     True if there is an edge between x and y
     */
   def isEdge(from: T, to: T): Boolean
+
 
   /**
     * Adds edge (from,to) if not already present, requires from /= to
