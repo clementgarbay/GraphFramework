@@ -47,12 +47,12 @@ class AdjacencyListUndirectedGraphTest extends WordSpec {
     }
     "be the correct adjacency matrix representation (List of List)" when {
       "toAdjacencyMatrix is called" in new ContextUndirected {
-        assert(graph.toAdjacencyMatrix == graphMatrix)
+        assert(graph.toAdjacencyMatrix == graphMatrixMap)
       }
     }
     "initialize an undirected adjacency list graph" when {
       "from adjacency matrix representation" in new ContextUndirected {
-        assert(AdjacencyListUndirectedGraph(graphMatrix) == graph)
+        assert(AdjacencyListUndirectedGraph(graphMatrixList) == graph)
       }
     }
     "be a int list of all nodes (0,1,2,3)" when {
@@ -77,10 +77,18 @@ trait ContextUndirected {
 
   val graph = AdjacencyListUndirectedGraph(List(n1, n2, n3, n4))
 
-  val graphMatrix = List(
+  val graphMatrixList = List(
     List(0, 1, 1, 0),
     List(1, 0, 1, 1),
     List(1, 1, 0, 0),
     List(0, 1, 0, 0)
   )
+
+  val graphMatrixMap: Map[Int, Map[Int, Int]] = Map(
+    0 -> Map(0 -> 0, 1 -> 1, 2 -> 1, 3 -> 0),
+    1 -> Map(0 -> 1, 1 -> 0, 2 -> 1, 3 -> 1),
+    2 -> Map(0 -> 1, 1 -> 1, 2 -> 0, 3 -> 0),
+    3 -> Map(0 -> 0, 1 -> 1, 2 -> 0, 3 -> 0)
+  )
+
 }

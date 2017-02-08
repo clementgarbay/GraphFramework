@@ -23,11 +23,6 @@ object NodeDirected {
 
   implicit def apply[T](id: T, successors: => Set[T]): NodeDirected[T] =
     NodeDirected(id, successors.map(nodeId => SemiArc(nodeId)))
-
-  implicit def apply[T](id: T, successors: Set[(T, Double)]): NodeDirected[T] = {
-    NodeDirected(id, successors.map(e => SemiArc(e._1, e._2)))
-  }
-
 }
 
 
@@ -47,9 +42,5 @@ object NodeUndirected {
 
   implicit def apply[T](id: T, neighbors: => Set[T]): NodeUndirected[T] =
     NodeUndirected(id, neighbors.map(nodeId => SemiEdge(nodeId)))
-
-  implicit def apply[T](id: T, neighbors: Set[(T, Double)]): NodeUndirected[T] = {
-    NodeUndirected(id, neighbors.map(e => SemiEdge(e._1, e._2)))
-  }
 }
 

@@ -17,8 +17,6 @@ trait Link[T] extends SemiLink[T] with Ordered[Link[T]] {
   val reverse: Link[T]
 
   override def compare(that: Link[T]): Int = distance.compare(that.distance)
-
-  def toNode: NodeDirected[T] = NodeDirected(from, Set((to, distance)))
 }
 
 object Link {
@@ -35,6 +33,8 @@ case class SemiArc[T](to: T, distance: Double = 1.0) extends SemiLinkTransformab
 
 case class Arc[T](from: T, to: T, distance: Double = 1.0) extends Link[T] {
   override lazy val reverse: Link[T] = Arc(to, from, distance)
+
+  lazy val toNode: NodeDirected[T] = NodeDirected(from, Set(SemiArc(to, distance)))
 }
 
 case class SemiEdge[T](to: T, distance: Double = 1.0) extends SemiLinkTransformable[T] {
@@ -43,4 +43,7 @@ case class SemiEdge[T](to: T, distance: Double = 1.0) extends SemiLinkTransforma
 
 case class Edge[T](from: T, to: T, distance: Double = 1.0) extends Link[T] {
   override lazy val reverse: Link[T] = Edge(to, from, distance)
+
+  lazy val toNode: NodeUndirected[T] = NodeUndirected(from, Set(SemiEdge(to, distance)))
+
 }
