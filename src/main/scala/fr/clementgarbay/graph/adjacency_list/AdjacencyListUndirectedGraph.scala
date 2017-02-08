@@ -63,11 +63,11 @@ object AdjacencyListUndirectedGraph {
   }
 
   def fromMatrix[T](matrix: => Map[T, Map[T, Int]]): AdjacencyListUndirectedGraph[T] = {
-    AdjacencyListUndirectedGraph(matrix.map({
-      case (j, neighbors) => NodeUndirected(j, neighbors.collect({
+    AdjacencyListUndirectedGraph(matrix.map {
+      case (j, neighbors) => NodeUndirected(j, neighbors.collect {
         case (i, value) if value == 1 => SemiEdge(i)
-      }).toSet)
-    }).toList)
+      }.toSet)
+    }.toList)
   }
 
   implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListUndirectedGraph[T] = {

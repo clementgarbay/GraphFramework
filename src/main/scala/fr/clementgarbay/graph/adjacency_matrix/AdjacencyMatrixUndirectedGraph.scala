@@ -11,11 +11,11 @@ case class AdjacencyMatrixUndirectedGraph[T](matrix: Map[T, Map[T, Int]]) extend
 
   override val nbNodes: Int = matrix.size
   override lazy val edges: List[Edge[T]] =
-    matrix.collect({
-      case (from, neighbors) => neighbors.collect({
+    matrix.collect {
+      case (from, neighbors) => neighbors.collect {
         case (to, value) if value == 1 => List(Edge(from, to), Edge(to, from))
-      }).toSet.flatten
-    }).flatten.toList
+      }.toSet.flatten
+    }.flatten.toList
 
   override lazy val nbEdges: Int = matrix.map(_._2.count(_._2 == 1)).sum / 2 // edges.size
   override lazy val nodesIds: List[T] = matrix.keys.toList
@@ -37,9 +37,9 @@ case class AdjacencyMatrixUndirectedGraph[T](matrix: Map[T, Map[T, Int]]) extend
   override def getNeighbors(nodeId: T): Set[SemiEdge[T]] = getNeighborsIds(nodeId).map(node => SemiEdge(node))
 
   override def getNeighborsIds(nodeId: T): Set[T] =
-    matrix.lift(nodeId).getOrElse(Map.empty).collect({
+    matrix.lift(nodeId).getOrElse(Map.empty).collect {
       case (node, isArc) if isArc == 1 => node
-    }).toSet
+    }.toSet
 
   private def update(from: T, to: T, value: Int): IUndirectedGraph[T] =
     AdjacencyMatrixUndirectedGraph(matrix.map {

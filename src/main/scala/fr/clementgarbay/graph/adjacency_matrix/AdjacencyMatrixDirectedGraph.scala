@@ -11,11 +11,11 @@ case class AdjacencyMatrixDirectedGraph[T](matrix: Map[T, Map[T, Int]]) extends 
 
   override val nbNodes: Int = matrix.size
   override lazy val arcs: List[Arc[T]] =
-    matrix.collect({
-      case (from, neighbors) => neighbors.collect({
+    matrix.collect {
+      case (from, neighbors) => neighbors.collect {
         case (to, value) if value == 1 => List(Arc(from, to), Arc(to, from))
-      }).toSet.flatten
-    }).flatten.toList
+      }.toSet.flatten
+    }.flatten.toList
 
   override lazy val nbArcs: Int = matrix.map(_._2.count(_._2 == 1)).sum // arcs.size
   override lazy val nodesIds: List[T] = matrix.keys.toList
@@ -57,9 +57,9 @@ case class AdjacencyMatrixDirectedGraph[T](matrix: Map[T, Map[T, Int]]) extends 
     getSuccessorsIds(nodeId).map(node => SemiArc(node))
 
   override def getSuccessorsIds(nodeId: T): Set[T] =
-    matrix.lift(nodeId).getOrElse(Map.empty).collect({
+    matrix.lift(nodeId).getOrElse(Map.empty).collect {
       case (node, isArc) if isArc == 1 => node
-    }).toSet
+    }.toSet
 
   override def getPredecessors(nodeId: T): Set[SemiArc[T]] = getPredecessorsIds(nodeId).map(node => SemiArc(node))
 

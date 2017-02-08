@@ -77,11 +77,11 @@ object AdjacencyListDirectedGraph {
     })
 
   def fromMatrix[T](matrix: => Map[T, Map[T, Int]]): AdjacencyListDirectedGraph[T] = {
-    AdjacencyListDirectedGraph(matrix.map({
-      case (j, successors) => NodeDirected(j, successors.collect({
+    AdjacencyListDirectedGraph(matrix.map {
+      case (j, successors) => NodeDirected(j, successors.collect {
         case (i, value) if value == 1 => SemiArc(i)
-      }).toSet)
-    }).toList)
+      }.toSet)
+    }.toList)
   }
 
   implicit def apply[T](adjacencyList: Map[T, Set[T]]): AdjacencyListDirectedGraph[T] =
