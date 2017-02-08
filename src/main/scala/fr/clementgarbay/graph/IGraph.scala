@@ -3,6 +3,7 @@ package fr.clementgarbay.graph
 import fr.clementgarbay.graph.heap.BinaryHeap
 
 import scala.collection.immutable.ListMap
+import scala.collection.mutable
 
 /**
   * @author Clément Garbay
@@ -111,6 +112,44 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
     }
 
     breadthFirstSearchRec(Set(startingNodeId), Set(startingNodeId))
+  }
+
+  /**
+    * Simple BFS traversal
+    */
+  def bfs(root: T): List[T] = {
+    val q = new mutable.Queue[T]()
+    var node = root
+    var result: List[T] = List.empty
+
+    q.enqueue(node)
+    while (q.nonEmpty) {
+      node = q.dequeue()
+      result = result :+ node
+      getNextNodes(node).foreach(e => if (!result.contains(e.to)) q.enqueue(e.to))
+      print(node + " ")
+    }
+
+    result
+  }
+
+  /**
+    * Simple DFS traversal
+    */
+  def dfs(root: T): List[T] = {
+    val s = new mutable.Stack[T]()
+    var node = root
+    var result: List[T] = List.empty
+
+    s.push(node)
+    while (s.nonEmpty) {
+      node = s.pop()
+      result = result :+ node
+      getNextNodes(node).foreach(e => if (!result.contains(e.to)) s.push(e.to))
+      print(node + " ")
+    }
+
+    result
   }
 
   /**
