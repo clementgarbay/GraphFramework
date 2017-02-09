@@ -25,6 +25,12 @@ class IUndirectedGraphTest extends WordSpec {
       assert(graphForDiameter.diameter == 3.0)
     }
   }
+
+  "The diameter with naive method" should {
+    "Return the right number for the cow grah" in new ContextUndirectedGraph {
+      assert(graphForDiameter.naiveDiameter == 3.0)
+    }
+  }
 }
 
 trait ContextUndirectedGraph {

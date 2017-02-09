@@ -126,11 +126,40 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
     while (q.nonEmpty) {
       node = q.dequeue()
       result = result :+ node
-      getNextNodes(node).foreach(e => if (!result.contains(e.to)) q.enqueue(e.to))
+      getNextNodes(node).foreach(e => if (!result.contains(e.to) && !q.contains(e.to)) q.enqueue(e.to))
       print(node + " ")
     }
 
     result
+  }
+
+  def naiveDiameter = {
+    /**
+      * Simple BFS traversal
+      */
+    def getHeight(root: T): Int = {
+      val q = new mutable.Queue[T]()
+      var node = root
+      var result: List[T] = List.empty
+
+      var dist: Map[T, Int] = getNodes.map(e => e -> 0).toMap
+
+      q.enqueue(node)
+      while (q.nonEmpty) {
+        node = q.dequeue()
+        result = result :+ node
+        getNextNodes(node).foreach(e => {
+          if (!result.contains(e.to) && !q.contains(e.to)) {
+            dist = dist.updated(e.to, dist(node) + 1)
+            q.enqueue(e.to)
+          }
+        })
+      }
+
+      dist.maxBy(_._2)._2
+    }
+
+    getNodes.map(e => getHeight(e)).max
   }
 
   /**
@@ -145,7 +174,7 @@ trait IGraph[T, U <: SemiLinkTransformable[T]] {
     while (s.nonEmpty) {
       node = s.pop()
       result = result :+ node
-      getNextNodes(node).foreach(e => if (!result.contains(e.to)) s.push(e.to))
+      getNextNodes(node).foreach(e => if (!result.contains(e.to) && !s.contains(e.to)) s.push(e.to))
       print(node + " ")
     }
 
