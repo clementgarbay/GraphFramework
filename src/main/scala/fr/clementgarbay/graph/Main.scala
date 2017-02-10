@@ -1,8 +1,9 @@
 package fr.clementgarbay.graph
 
 import fr.clementgarbay.graph.Link._
-import fr.clementgarbay.graph.adjacency_list.AdjacencyListDirectedGraph
+import fr.clementgarbay.graph.adjacency_list.{AdjacencyListDirectedGraph, AdjacencyListUndirectedGraph}
 import fr.clementgarbay.graph.heap.BinaryHeap
+
 /**
   * @author Clément Garbay
   * @author Anaël Chardan
@@ -10,78 +11,20 @@ import fr.clementgarbay.graph.heap.BinaryHeap
 object Main extends App {
 
   override def main(args: Array[String]): Unit = {
-    val link: Arc[Int] = Arc(1, 2, 4.0)
-    val link2: Arc[Int] = Arc(3, 4, 10.0)
-    val link3: Arc[Int] = Arc(3, 4, 6.0)
-    val link4: Arc[Int] = Arc(3, 4, 12.0)
-    val link5: Arc[Int] = Arc(3, 4, 14.0)
-    val link6: Arc[Int] = Arc(3, 4, 9.0)
-
-    println(link2 < link3)
-
-    val binaryHeap = BinaryHeap(List(4,10,6,12,14,9))
-
-    println(binaryHeap)
-    println(binaryHeap.add(1))
-    println(binaryHeap.removeRoot())
-
-    val binaryHeapArcs = BinaryHeap[Link[Int]](List(link, link2, link3, link4, link5, link6))
-    println(binaryHeapArcs)
-    println(binaryHeapArcs.add(Arc(5, 6, 1.0)))
-
-    val graph = AdjacencyListDirectedGraph.fromMapWithDistances(Map(
-      "B" -> Set(("A", 5.0), ("C", 4.0), ("D", 11.0)),
-      "A" -> Set(("B", 5.0), ("C", 10.0)),
-      "C" -> Set(("B", 4.0), ("A", 10.0), ("D", 5.0)),
-      "D" -> Set(("B", 11.0), ("C", 5.0))
+    val graph = AdjacencyListUndirectedGraph(Map(
+      1 -> Set(2, 3, 4, 7),
+      2 -> Set(1, 3, 4, 5, 7),
+      3 -> Set(1, 2, 7, 6, 4),
+      4 -> Set(2, 1, 3, 6, 5),
+      5 -> Set(4, 2, 7, 6),
+      6 -> Set(5, 4, 3, 7),
+      7 -> Set(1, 2, 3, 5, 6)
     ))
 
-    val result = graph.prim("A")
+    //L'algorithme utilisé est dans
+    val resultColoration = graph.getColororifiedNode
 
-    println("plop")
-//    val graph1 = GraphTools.generateUndirectedGraph(10,10)
-
-
-//    val graph = AdjacencyListDirectedGraph(List(
-//      NodeDirected(0, Set(1, 2)),
-//      NodeDirected(1, Set(0, 3)),
-//      NodeDirected(2, Set(1)),
-//      NodeDirected(3, Set(0, 2))
-//    ))
-//
-//    print(graph.nbNodes)
-
-//    println(graph.depthFirstSearch(0))
-
-
-//    GraphTools.displayGraph(graph)
-//
-//    println(graph.getNbEdges)
-//    println(graph.isEdge(1,14))
-//
-//    GraphTools.displayGraph(graph.removeEdge(0,1))
-
-//    val graph2 = GraphTools.generateDirectedGraph(3,2)
-
-//    GraphTools.displayGraph(graph)
-//    GraphTools.displayGraph(graph.toAdjacencyMatrix)
-
-//    GraphTools.displayGraph(graph2)
-
-
-
-
-//    GraphTools.displayGraph(graph2.computeInverse)
-
-
-    //
-//    val n1 = NodeUndirected(1, List.empty)
-//    val n2 = NodeUndirected(2, List(n1))
-//    val n3 = NodeUndirected(3, List(n1,n2))
-//    val n4 = NodeUndirected(4, List(n3))
-//
-//    val graph = AdjacencyListUndirectedGraph(List(n1,n2,n3,n4))
-//
-//    print(graph.removeEdge(2,1))
+    //CHAQUE Valeur etant les organisation peut s'executer en meme temps
+    println(resultColoration)
   }
 }

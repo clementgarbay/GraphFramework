@@ -1,5 +1,7 @@
 package fr.clementgarbay.graph
 
+import scala.collection.mutable
+
 /**
   * @author Clément Garbay
   * @author Anaël Chardan
@@ -99,4 +101,34 @@ trait IUndirectedGraph[T] extends IGraph[T, SemiEdge[T]] {
     * @inheritdoc
     */
   override def getNextNodesId(nodeId: T): Set[T] = getNeighborsIds(nodeId)
+
+
+
+
+  def getColororifiedNode: Map[Int, List[T]] = {
+    var availableColors = (0 to nbNodes).toList
+    var coloredNodes: mutable.Map[T, Option[Int]] = mutable.Map.empty[T, Option[Int]]
+    nodesIds.foreach(e => coloredNodes.update(e, None))
+
+
+    val s = new mutable.Stack[T]()
+    var node = nodesIds.head
+    var result: List[T] = List.empty
+
+    s.push(node)
+    while (s.nonEmpty) {
+      node = s.pop()
+      result = result :+ node
+      var takenColors: List[Int] = getNeighbors(node).map(e => coloredNodes(e.to)).collect {
+        case Some(x) => x
+      }.toList
+      var firstAvailableColor = availableColors.filter(e => !takenColors.contains(e)).head
+
+      coloredNodes.update(node, Some(firstAvailableColor))
+
+      getNextNodes(node).foreach(e => if (!result.contains(e.to) && !s.contains(e.to)) s.push(e.to))
+    }
+
+    coloredNodes.groupBy(_._2).map(e => e._1.get -> e._2.keys.toList)
+  }
 }
